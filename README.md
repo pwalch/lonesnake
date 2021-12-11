@@ -12,7 +12,7 @@ What does this tool provide compared to other tools?
 What are the limitations of this tool?
 * supports installing only a single Python interpreter at a time for a project. It does not support installing multiple Python interpreters with different versions for the same project.
   * This can be a problem for you if you are the author of a library that supports multiple versions of Python. If it is the case, it is recommended to use [pyenv](https://github.com/pyenv/pyenv) or [asdf](https://github.com/asdf-vm/asdf).
-* supports only Python 3.5+, older versions are not supported.
+* supports only Python 3.7+, older versions are not supported.
 * consumes more disk space than tools that keep a single version of the Python interpreter in `$HOME` (pyenv, asdf), as the interpreter is copied to every project (300 MB).
 
 ## installation
@@ -59,8 +59,8 @@ OPTIONS
   --cpython-version VERSION
        pass a version number to install the CPython interpreter
        version of your choice. By default, the version 3.10.1
-       is installed. Versions before Python 3.6 are not supported.
-       That is, Python 2.7.X and 3.5.X are not supported.
+       is installed. Versions before Python 3.7 are not supported.
+       That is, Python 2.7.X and 3.6.X are not supported.
        You can find the list of all Python releases on this page:
        https://www.python.org/downloads/
 

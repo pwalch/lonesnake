@@ -26,8 +26,8 @@ function usage() {
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version" \
         "$DEFAULT_STANDALONE_VERSION"
-    echo "       is installed. Versions before Python 3.6 are not supported."
-    echo "       That is, Python 2.7.X and 3.5.X are not supported."
+    echo "       is installed. Versions before Python 3.7 are not supported."
+    echo "       That is, Python 2.7.X and 3.6.X are not supported."
     echo "       You can find the list of all Python releases on this page:"
     echo "       https://www.python.org/downloads/"
     echo
@@ -149,15 +149,15 @@ function check_minor_version() {
         grep -Eo "^[0-9]+" | tr -d '\n')
     if [[ "$python_major_number" != "3" ]]; then
         error_out "Python major version '$python_major_number' that you requested is" \
-            "not supported. Please use Python 3.6+."
+            "not supported. Please use Python 3.7+."
     fi
 
     local python_minor_number
     python_minor_number=$(echo "$python_minor_version" 2>&1 | \
         grep -Eo "[0-9]+$" | tr -d '\n')
-    if [[ "$python_minor_number" -lt "6" ]]; then
+    if [[ "$python_minor_number" -lt "7" ]]; then
         error_out "Python version '$standalone_version' that you requested is too" \
-            "old and not supported. Please use Python 3.6+."
+            "old and not supported. Please use Python 3.7+."
     fi
 }
 
