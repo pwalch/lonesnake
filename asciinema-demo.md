@@ -3,7 +3,7 @@
 Commands to run to record the demo:
 
 * `cd workspace`
-* `rm -rf ~/.cache/standalone-venv && rm -rf ./.standalone-venv`
+* `rm -rf ~/.cache/standalone-venv ./.standalone-venv`
 * `asciinema rec demo.cast`
 * `which python`
 * `python --version`
