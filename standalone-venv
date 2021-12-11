@@ -12,8 +12,8 @@ readonly CACHE_DIR="$HOME/.cache/standalone-venv"
 readonly DEFAULT_STANDALONE_VERSION="3.10.1"
 
 function usage() {
-    echo -e "Usage: \e[1m$PROGNAME\e[0m" \
-        "[\e[1m--cpython-version\e[0m \e[4mVERSION\e[0m]"
+    echo -e "Usage: \033[1m$PROGNAME\033[0m" \
+        "[\033[1m--cpython-version\033[0m \033[4mVERSION\033[0m]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
     echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
@@ -21,8 +21,8 @@ function usage() {
     echo "interpreter."
     echo "The source and build files are cached in '$CACHE_DIR'."
     echo
-    echo -e "\e[1mOPTIONS\e[0m"
-    echo -e "  \e[1m--cpython-version\e[0m \e[4mVERSION\e[0m"
+    echo -e "\033[1mOPTIONS\033[0m"
+    echo -e "  \033[1m--cpython-version\033[0m \033[4mVERSION\033[0m"
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version" \
         "$DEFAULT_STANDALONE_VERSION"
@@ -36,14 +36,14 @@ function usage() {
 }
 
 function print_python_deps() {
-    echo -e "\e[1mDEPENDENCIES\e[0m"
+    echo -e "\033[1mDEPENDENCIES\033[0m"
     echo "  📝 Make sure you have installed all the dependencies that are necessary"
     echo "     to compile the CPython interpreter. Check out the docs for more details"
     echo "     about how to do it for your OS."
 }
 
 function error_out() {
-    echo -e "\e[31m[ERROR] $*\e[0m" >&2
+    echo -e "\033[31m[ERROR] $*\033[0m" >&2
     exit 1
 }
 
@@ -265,7 +265,7 @@ function compile_interpreter() {
     # step later. If we don't set it, it is in /usr/local by default.
     local configure_output
     if ! configure_output=$(pushd "$cache_source_dir" && \
-            ./configure --prefix "" 2>&1 &&
+            ./configure --prefix="" 2>&1 &&
             popd); then
         echo "[ERROR] Detailed logs for '.configure':"
         echo "$configure_output"
@@ -324,7 +324,7 @@ function skip_compile_interpreter() {
         "so skipping compilation"
     echo "     and moving directly to installation. If you wish to remove the cache,"
     echo "     you can run this command:"
-    echo -e "       \e[2mrm -rf ${cache_source_dir}\e[0m"
+    echo -e "       \033[2mrm -rf ${cache_source_dir}\033[0m"
 }
 
 function install_venv() {
@@ -386,7 +386,7 @@ function print_install_success() {
     if [[ -d "./.git" ]]; then
         if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore"; then
             echo -e "⚠️  Don't forget to add a line for it in your \033[1m.gitignore\033[0m:"
-            echo -e "  \e[2m/${STANDALONE_DIRNAME}/\e[0m"
+            echo -e "  \033[2m/${STANDALONE_DIRNAME}/\033[0m"
             echo
         fi
     fi
@@ -397,7 +397,7 @@ function print_activation_instructions() {
 
     echo -e "\033[1mACTIVATION INSTRUCTIONS\033[0m"
     echo "You can activate your environment with the following command:"
-    echo -e "  \e[2msource ${venv_rel_dir}/bin/activate\033[0m"
+    echo -e "  \033[2msource ${venv_rel_dir}/bin/activate\033[0m"
     echo
     echo -e "💡 Please note that there are solutions in the documentation to" \
         "\033[3mautomatically\033[0m"
