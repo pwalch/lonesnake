@@ -294,8 +294,10 @@ function compile_interpreter() {
     echo "➖ Compiling Python interpreter with 'make -j'..."
     local start_compile_date="$SECONDS"
     local make_output
-    if ! make_output=$(make -C "$cache_source_dir" -j 2>&1); then
-        echo "[ERROR] Detailed logs for 'make -j':"
+    # On python.org, the compilation tutorial suggests to use 'make -j2'.
+    # https://devguide.python.org/setup/#install-dependencies
+    if ! make_output=$(make -C "$cache_source_dir" -j2 2>&1); then
+        echo "[ERROR] Detailed logs for 'make -j2':"
         echo "$make_output"
         error_out "Could not compile Python interpreter" \
             "with 'make -j' at '$cache_source_dir'"
