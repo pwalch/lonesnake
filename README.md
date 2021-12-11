@@ -7,7 +7,7 @@
 What does this tool provide compared to other tools?
 * **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter and an associated venv. As the environment has its own full-blown Python interpreter, it is protected against breaking updates by your package manager (brew) or you blowing up your environment in one of your projects. You can get rid of your environment simply by removing the `.standalone-venv` directory.
 * **transparent configuration**. No sourcing of tool-specific initialization scripts. Auto-activation of venv can be enabled with a few explicit environment variable exports.
-* **easy installation**. No long list of steps to follow. Download the Bash script to a directory on your `$PATH`, then run it and you've got your environment. Doesn't assume the existence of a working Python interpreter.
+* **easy venv setup**. No long list of steps to follow to set up a virtualenv. Install the dependencies, download the Bash script somewhere on your `$PATH`, then run it and you've got your environment. Doesn't assume the existence of a working Python interpreter.
 
 What are the limitations of this tool?
 * supports installing only a single Python interpreter at a time for a project. It does not support installing multiple Python interpreters with different versions for the same project.
@@ -17,29 +17,39 @@ What are the limitations of this tool?
 
 ## installation
 
-* install `curl` with your package manager if you don't already have it
-* install the CPython build dependencies depending on your OS. The instructions below are taken from the [pyenv Wiki](https://github.com/pyenv/pyenv/wiki#suggested-build-environment):
+### macOS installation with Brew
+
+* `brew tap pwalch/standalone-venv`
+* `brew install standalone-venv`
+
+### Manual installation
+
+* install the CPython build dependencies and `curl` depending on your OS. The instructions below are taken from the [pyenv Wiki](https://github.com/pyenv/pyenv/wiki#suggested-build-environment) and the [python.org dev guide](https://devguide.python.org/setup/#install-dependencies):
   * macOS
     ```bash
-    brew install openssl readline sqlite3 xz zlib
+    brew install curl openssl readline sqlite3 xz zlib
     ```
   * Ubuntu/Debian/Mint
     ```bash
     sudo apt-get update && sudo apt-get install -y \
-      make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+      curl make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
       libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev \
       libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
     ```
   * Fedora
     ```bash
-    sudo dnf install make gcc zlib-devel bzip2 bzip2-devel readline-devel \
+    sudo dnf install curl make gcc zlib-devel bzip2 bzip2-devel readline-devel \
       sqlite sqlite-devel openssl-devel tk-devel libffi-devel xz-devel
     ```
   * Arch Linux
     ```bash
-    sudo pacman -S --needed base-devel openssl zlib xz
+    sudo pacman -S --needed curl base-devel openssl zlib xz
     ```
-* download the `standalone-venv` Bash script to a directory in your `$PATH`, typically `~/.local/bin`.
+* download the `standalone-venv` Bash script to a directory in your `$PATH`. You can put it anywhere, but here are some instructions to download it to `~/.local/bin`:
+  * `mkdir -p ~/.local/bin`
+  * make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your interactive shell start-up script (e.g. `.bashrc` or `.zshrc`)
+  * `curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.0.3/standalone-venv`
+  * `chmod u+x ~/.local/bin/standalone-venv`
 * check that the script is accessible by running `standalone-venv --help`
 
 ## usage
