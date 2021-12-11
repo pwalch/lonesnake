@@ -228,6 +228,18 @@ function compile_interpreter() {
     local ready_file="$2"
     local cache_source_dir="$3"
 
+    # On macOS, OpenSSL is located in a non-standard location when installed
+    # with brew. We use 'brew --prefix openssl', and pass the resulting path later
+    # to the CPython configure script with '--with-openssl'.
+    local with_openssl_str=""
+    if [[ "$OSTYPE" == "darwin"* ]]; then
+        if ! brew_openssl_prefix=$(brew --prefix openssl); then
+            error_out "You are on macOS, but we the OpenSSL path cannot be found" \
+                "with 'brew --prefix openssl'. Did you install 'openssl' with brew?"
+        fi
+        with_openssl_str="--with-openssl=${brew_openssl_prefix}"
+    fi
+
     echo "  ℹ️  No previous build of CPython $standalone_version was found in the" \
         "cache, so we are going to download its source code from 'python.org' and" \
         "compile it."
@@ -265,7 +277,7 @@ function compile_interpreter() {
     # step later. If we don't set it, it is in /usr/local by default.
     local configure_output
     if ! configure_output=$(pushd "$cache_source_dir" && \
-            ./configure --prefix="" 2>&1 &&
+            ./configure --prefix="" "$with_openssl_str" 2>&1 &&
             popd); then
         echo "[ERROR] Detailed logs for '.configure':"
         echo "$configure_output"
