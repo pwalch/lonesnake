@@ -48,7 +48,7 @@ function error_out() {
 }
 
 function check_prerequisites() {
-    if [[ "$OSTYPE" != "linux-gnu" ]] && [[ "$OSTYPE" != "darwin" ]]; then
+    if [[ "$OSTYPE" != "linux-gnu"* ]] && [[ "$OSTYPE" != "darwin"* ]]; then
         error_out "Your OS '$OSTYPE' is not supported. Only Linux and macOS" \
             "are supported for now."
     fi
