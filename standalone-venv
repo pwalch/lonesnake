@@ -1,0 +1,428 @@
+#!/bin/bash
+
+# Copyright (C) Pierre Walch
+# This code is licensed under the GNU GPL, see the LICENSE file.
+# https://github.com/pwalch/standalone-venv/
+
+set -euo pipefail
+
+readonly PROGNAME=$(basename "$0")
+readonly STANDALONE_DIRNAME=".standalone-venv"
+readonly CACHE_DIR="$HOME/.cache/standalone-venv"
+readonly DEFAULT_STANDALONE_VERSION="3.10.1"
+
+function usage() {
+    echo -e "Usage: \e[1m$PROGNAME\e[0m" \
+        "[\e[1m--cpython-version\e[0m \e[4mVERSION\e[0m]"
+    echo
+    echo "Creates a standalone Python environment in a new directory named "
+    echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
+    echo "a CPython interpreter built from source and a venv created with that"
+    echo "interpreter."
+    echo "The source and build files are cached in '$CACHE_DIR'."
+    echo
+    echo -e "\e[1mOPTIONS\e[0m"
+    echo -e "  \e[1m--cpython-version\e[0m \e[4mVERSION\e[0m"
+    echo "       pass a version number to install the CPython interpreter"
+    echo "       version of your choice. By default, the version" \
+        "$DEFAULT_STANDALONE_VERSION"
+    echo "       is installed. Versions before Python 3.6 are not supported."
+    echo "       That is, Python 2.7.X and 3.5.X are not supported."
+    echo "       You can find the list of all Python releases on this page:"
+    echo "       https://www.python.org/downloads/"
+    echo
+    print_python_deps
+    echo
+}
+
+function print_python_deps() {
+    echo -e "\e[1mDEPENDENCIES\e[0m"
+    echo "  📝 Make sure you have installed all the dependencies that are necessary"
+    echo "     to compile the CPython interpreter. Check out the docs for more details"
+    echo "     about how to do it for your OS."
+}
+
+function error_out() {
+    echo -e "\e[31m[ERROR] $*\e[0m" >&2
+    exit 1
+}
+
+function check_prerequisites() {
+    if [[ "$OSTYPE" != "linux-gnu" ]] && [[ "$OSTYPE" != "darwin" ]]; then
+        error_out "Your OS '$OSTYPE' is not supported. Only Linux and macOS" \
+            "are supported for now."
+    fi
+
+    if [[ ! -x "$(command -v curl)" ]]; then
+        error_out "'curl' command not found, please install it."
+    fi
+
+    if [[ ! -x "$(command -v make)" ]]; then
+        error_out "'make' command not found, please install it."
+    fi
+}
+
+function main() {
+    local standalone_version="$1"
+
+    check_prerequisites
+
+    check_cpython_version_valid "$standalone_version"
+
+    echo -e "We are going to install a standalone Python environment in directory"
+    echo -e "\033[1m${STANDALONE_DIRNAME}\033[0m, which will include the" \
+        "CPython $standalone_version interpreter"
+    echo -e "as well as a venv based on this interpreter."
+    echo
+
+    remove_standalone_dir "$STANDALONE_DIRNAME"
+
+    # Extract Python minor version (X.Y), as we will need the name of the
+    # interpreter executable later, after compiling from source.
+    local python_minor_version
+    if ! python_minor_version=$(echo "$standalone_version" 2>&1 | \
+            grep -Eo '^[0-9]+\.[0-9]+'); then
+        error_out "Could not find Python minor version for fully" \
+            "specified version '$standalone_version'."
+    fi
+
+    check_minor_version "$python_minor_version"
+
+    local cache_source_dir="${CACHE_DIR}/${standalone_version}"
+    ensure_cache_dir "$cache_source_dir" "$standalone_version"
+
+    echo -e "\033[1mCPYTHON INTERPRETER COMPILATION & INSTALLATION\033[0m"
+    local standalone_interpreter_rel_dir="${STANDALONE_DIRNAME}/interpreter"
+    local standalone_interpreter_dir="${PWD}/${STANDALONE_DIRNAME}/interpreter"
+    compile_and_install_cpython "$cache_source_dir" "$python_minor_version" \
+        "$standalone_interpreter_rel_dir" "$standalone_interpreter_dir"
+
+    local standalone_rel_bin="${standalone_interpreter_rel_dir}/bin/python${python_minor_version}"
+    verify_interpreter "$STANDALONE_VERSION" "$standalone_rel_bin"
+    echo
+
+    echo -e "\033[1mVENV INSTALLATION\033[0m"
+    local venv_rel_dir="${STANDALONE_DIRNAME}/venv"
+    install_venv "$venv_rel_dir" "$standalone_rel_bin"
+
+    echo
+
+    echo -e "\033[1mSUMMARY\033[0m"
+    print_install_success "$STANDALONE_DIRNAME" "$standalone_interpreter_rel_dir" \
+        "$venv_rel_dir"
+
+    print_activation_instructions "$venv_rel_dir"
+}
+
+function check_cpython_version_valid() {
+    local standalone_version="$1"
+
+    # Check whether the version passed follows the X.Y.Z format (X.Y not accepted)
+    if ! echo "$standalone_version" | \
+            grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" &> /dev/null; then
+        error_out "The Python versioned you passed '$standalone_version' is" \
+            "not valid. Please pass the full version name, such" \
+            "as '$DEFAULT_STANDALONE_VERSION'."
+    fi
+}
+
+function remove_standalone_dir() {
+    local standalone_dir_path="$1"
+
+    # Remove standalone directory if it exists
+    if [[ -d "$standalone_dir_path" ]]; then
+        echo "🗑️  An environment already exists at '$standalone_dir_path'." \
+            "Deleting it now so we can start with a clean state."
+        if ! rm -rf "$standalone_dir_path"; then
+            error_out "Could not remove old environment at '$standalone_dir_path'."
+        fi
+        echo "  ✅ deleted old environment"
+        echo
+    fi
+}
+
+function check_minor_version() {
+    local python_minor_version="$1"
+
+    local python_major_number
+    python_major_number=$(echo "$python_minor_version" 2>&1 | \
+        grep -Eo "^[0-9]+" | tr -d '\n')
+    if [[ "$python_major_number" != "3" ]]; then
+        error_out "Python major version '$python_major_number' that you requested is" \
+            "not supported. Please use Python 3.6+."
+    fi
+
+    local python_minor_number
+    python_minor_number=$(echo "$python_minor_version" 2>&1 | \
+        grep -Eo "[0-9]+$" | tr -d '\n')
+    if [[ "$python_minor_number" -lt "6" ]]; then
+        error_out "Python version '$standalone_version' that you requested is too" \
+            "old and not supported. Please use Python 3.6+."
+    fi
+}
+
+function ensure_cache_dir() {
+    local cache_source_dir="$1"
+    local standalone_version="$2"
+
+    if ! mkdir -p "$CACHE_DIR"; then
+        error_out "Could not create cache directory for the interpreters" \
+            "at '$CACHE_DIR'."
+    fi
+
+    if ! mkdir -p "$cache_source_dir"; then
+        error_out "Could not create cache directory for CPython version" \
+            "$standalone_version."
+    fi
+}
+
+function compile_and_install_cpython() {
+    local cache_source_dir="$1"
+    local python_minor_version="$2"
+    local standalone_interpreter_rel_dir="$3"
+    local standalone_interpreter_dir="$4"
+
+    echo "➖ Looking for a previous build of CPython $standalone_version interpreter in"
+    echo "the cache at '$cache_source_dir'..."
+    local ready_file="$cache_source_dir/ready"
+    if [[ -f "$ready_file" ]]; then
+        skip_compile_interpreter "$standalone_version" "$cache_source_dir"
+    else
+        # If the 'ready' file does not exist, it means a previous build was aborted
+        # before completion, so the directory is not in a usable state and we must
+        # remove it.
+        rm -rf "${cache_source_dir:?}/*"
+
+        compile_interpreter "$standalone_version" "$ready_file" "$cache_source_dir"
+    fi
+
+    install_interpreter "$standalone_interpreter_rel_dir" \
+        "$standalone_interpreter_dir" "$cache_source_dir"
+}
+
+function verify_interpreter() {
+    local standalone_version="$1"
+    local standalone_rel_bin="$2"
+
+    echo "➖ Verifying that the interpreter located at '$standalone_rel_bin' runs and" \
+        "returns the expected version..."
+
+    local version_stdout
+    if ! version_stdout=$("$standalone_rel_bin" --version); then
+        error_out "Could not get Python version using interpreter: $standalone_rel_bin"
+    fi
+
+    local expected_version_stdout="Python $standalone_version"
+    if [[ "$version_stdout" != "Python $standalone_version" ]]; then
+        error_out "Version of interpreter at '$standalone_rel_bin'" \
+            "('${version_stdout}') does not match expected version" \
+            "'$expected_version_stdout'."
+    fi
+
+    echo "  ✅ ran 'python --version' using the interpreter we just compiled. It" \
+        "returned '$version_stdout' as expected."
+}
+
+function compile_interpreter() {
+    local standalone_version="$1"
+    local ready_file="$2"
+    local cache_source_dir="$3"
+
+    echo "  ℹ️  No previous build of CPython $standalone_version was found in the" \
+        "cache, so we are going to download its source code from 'python.org' and" \
+        "compile it."
+
+    # Check whether requested Python interpreter version exists on 'python.org' 
+    local ftp_base_url="https://www.python.org/ftp/python"
+    local ftp_version_path="${standalone_version}/Python-${standalone_version}.tgz"
+    local python_source_url="${ftp_base_url}/${ftp_version_path}"
+    if ! curl -sI --output /dev/null --fail "$python_source_url"; then
+        error_out "Python version '$standalone_version' that you are" \
+            "trying to install cannot be found on 'python.org' at" \
+            "this address: $python_source_url. Did you make a typo?"
+    fi
+
+    echo "➖ Downloading Python interpreter source code from" \
+        "'$python_source_url'..."
+    if ! curl -s "$python_source_url" | \
+            tar -xz -C "$cache_source_dir" --strip-components=1; then
+        error_out "Could not download Python interpreter source code" \
+            "tarball '$python_source_url' to temporary" \
+            "directory '$cache_source_dir'."
+    fi
+
+    echo "  ✅ downloaded Python interpreter to '$cache_source_dir'."
+    # Check whether the Python interpreter source directory exists and enter it
+    if [[ ! -d "$cache_source_dir" ]]; then
+        error_out "Could not find Python interpreter source" \
+            "directory: $cache_source_dir"
+    fi
+
+    echo "➖ Running './configure' in Python interpreter source code directory" \
+        "'$cache_source_dir'..."
+    local start_configure_date="$SECONDS"
+    # We pass '--prefix ""' so all paths are relative to 'DESTDIR' at the 'make install'
+    # step later. If we don't set it, it is in /usr/local by default.
+    local configure_output
+    if ! configure_output=$(pushd "$cache_source_dir" && \
+            ./configure --prefix "" 2>&1 &&
+            popd); then
+        echo "[ERROR] Detailed logs for '.configure':"
+        echo "$configure_output"
+        echo
+        print_python_deps
+        error_out "Could not run 'configure' for Python interpreter source" \
+            "at '$cache_source_dir'."
+    fi
+    local end_configure_date="$SECONDS"
+    local configure_duration=$((end_configure_date - start_configure_date))
+    echo "  ✅ ran './configure' in ${configure_duration}s, ready to" \
+        "compile interpreter."
+
+    echo "➖ Compiling Python interpreter with 'make -j'..."
+    local start_compile_date="$SECONDS"
+    local make_output
+    if ! make_output=$(make -C "$cache_source_dir" -j 2>&1); then
+        echo "[ERROR] Detailed logs for 'make -j':"
+        echo "$make_output"
+        error_out "Could not compile Python interpreter" \
+            "with 'make -j' at '$cache_source_dir'"
+    fi
+    local end_compile_date="$SECONDS"
+    local compile_duration=$((end_compile_date - start_compile_date))
+    echo "  ✅ compiled Python interpreter in ${compile_duration}s."
+
+    echo "This file indicates that the CPython interpreter has been fully built in" \
+        "this directory. We use this to know whether 'make install' can be run." \
+        "without having to re-compile." \
+        > "$ready_file"
+}
+
+function install_interpreter() {
+    local standalone_interpreter_rel_dir="$1"
+    local standalone_interpreter_dir="$2"
+    local cache_source_dir="$3"
+    
+    echo "➖ Installing Python interpreter to '$standalone_interpreter_rel_dir'..."
+    local start_install_date="$SECONDS"
+    local make_install_output
+    if ! make_install_output=$(export DESTDIR="$standalone_interpreter_dir" && \
+            make -C "$cache_source_dir" install 2>&1); then
+        echo "[ERROR] Detailed logs for 'make install':"
+        echo "$make_install_output"
+        error_out "Could not run 'make install' in '$cache_source_dir'."
+    fi
+    local end_install_date="$SECONDS"
+    local install_duration=$((end_install_date - start_install_date))
+    echo "  ✅ installed Python interpreter in ${install_duration}s."
+}
+
+function skip_compile_interpreter() {
+    local standalone_version="$1"
+    local cache_source_dir="$2"
+    echo "  ✅ Found a previous build of CPython $standalone_version in the cache," \
+        "so skipping compilation"
+    echo "     and moving directly to installation. If you wish to remove the cache,"
+    echo "     you can run this command:"
+    echo -e "       \e[2mrm -rf ${cache_source_dir}\e[0m"
+}
+
+function install_venv() {
+    local venv_rel_dir="$1"
+    local standalone_rel_bin="$2"
+
+    echo "➖ Creating a Python venv at '$venv_rel_dir' using the interpreter we built..."
+    if ! "$standalone_rel_bin" -m venv "$venv_rel_dir"; then
+        error_out "Could not create venv at '$venv_rel_dir'."
+    fi
+    echo "  ✅ created Python venv"
+
+    local venv_pip="$venv_rel_dir/bin/pip"
+    if [[ ! -f "$venv_pip" ]]; then
+        error_out "Could not find 'pip' in venv at: $venv_pip"
+    fi
+
+    echo "➖ Upgrading Pip and setuptools inside venv using '$venv_pip'..."
+    # Upgrading pip and setuptools can be done at venv creation using the
+    # '--upgrade-deps' option, but this is only available from Python 3.9 so we
+    # upgrade manually.
+    local pip_upgrade_output
+    if ! pip_upgrade_output=$("$venv_pip" install --upgrade pip setuptools 2>&1); then
+        echo "$pip_upgrade_output"
+        echo
+        error_out "Could not upgrade venv Pip at '$venv_pip'."
+    fi
+    echo "  ✅ upgraded Pip inside venv"
+
+    local complimentary_packages=(wheel)
+    echo "➖ Installing complimentary Python packages (${complimentary_packages[*]})" \
+        "inside venv..."
+    local complimentary_packages_output
+    if ! complimentary_packages_output=$( \
+            "$venv_pip" install "${complimentary_packages[@]}" 2>&1); then
+        echo "$complimentary_packages_output"
+        echo
+        error_out "Could not install all complimentary packages inside" \
+            "venv using venv Pip '$venv_pip'."
+    fi
+    echo "  ✅ installed complimentary packages inside venv"
+}
+
+function print_install_success() {
+    local standalone_dirname="$1"
+    local standalone_interpreter_rel_dir="$2"
+    local venv_rel_dir="$3"
+
+    local standalone_dir_size
+    if ! standalone_dir_size=$(du -sh "$standalone_dirname" | cut -f1); then
+        error_out "Could not extract size of standalone directory '$standalone_dirname'."
+    fi
+    echo "The Python standalone environment has been installed successfully in"
+    echo "'$standalone_dirname'! (💽 $standalone_dir_size)"
+    echo "You can find the interpreter in '$standalone_interpreter_rel_dir'"
+    echo "and the venv in '$venv_rel_dir'."
+    echo
+
+    if [[ -d "./.git" ]]; then
+        if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore"; then
+            echo -e "⚠️  Don't forget to add a line for it in your \033[1m.gitignore\033[0m:"
+            echo -e "  \e[2m/${STANDALONE_DIRNAME}/\e[0m"
+            echo
+        fi
+    fi
+}
+
+function print_activation_instructions() {
+    local venv_rel_dir="$1"
+
+    echo -e "\033[1mACTIVATION INSTRUCTIONS\033[0m"
+    echo "You can activate your environment with the following command:"
+    echo -e "  \e[2msource ${venv_rel_dir}/bin/activate\033[0m"
+    echo
+    echo -e "💡 Please note that there are solutions in the documentation to" \
+        "\033[3mautomatically\033[0m"
+    echo "activate the venv."
+    echo
+}
+
+STANDALONE_VERSION="$DEFAULT_STANDALONE_VERSION"
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        --cpython-version)
+            STANDALONE_VERSION="$2"
+            shift
+        ;;
+
+        --help|-h)
+            usage
+            exit 1
+        ;;
+
+        *)
+            error_out "Could not recognize option '$1'."
+        ;;
+    esac
+    shift
+done
+
+main "$STANDALONE_VERSION"
