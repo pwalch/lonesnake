@@ -1,19 +1,19 @@
 # standalone-venv
 
-`standalone-venv` is a tool to easily set up a self-contained Python environment with an interpreter and a venv in a `.standalone-venv` directory. It can be used to set up an isolated Python environment for a project, or a global Python environment for a user.
+`standalone-venv` is a tool to easily set up a self-contained Python environment with an interpreter and a venv in a `.standalone-venv` directory. It can be used to set up isolated Python environments for projects, as well as a global Python environment.
 
 [![asciicast](https://asciinema.org/a/455461.svg)](https://asciinema.org/a/455461)
 
 What does this tool provide compared to other tools?
-* **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter and an associated venv. As the environment has its own full-blown Python interpreter, it is protected against breaking updates by your package manager (brew) or you blowing up your environment in one of your projects. You can get rid of your environment simply by removing the `.standalone-venv` directory.
-* **transparent configuration**. No sourcing of tool-specific initialization scripts. Auto-activation of venv can be enabled with a few explicit environment variable exports.
-* **easy venv setup**. No long list of steps to follow to set up a virtualenv. Install the dependencies, download the Bash script somewhere on your `$PATH`, then run it and you've got your environment. Doesn't assume the existence of a working Python interpreter.
+* **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter and an associated venv. As the environment has its own full-blown Python interpreter, it is protected against breaking updates by your package manager (brew) or you blowing up your environment in one of your projects.
+* **transparent configuration and structure**. No sourcing of tool-specific initialization scripts. Auto-activation of venv can be enabled with a few explicit environment variable exports. You can get rid of your environment simply by removing the `.standalone-venv` directory.
+* **easy venv setup**. No need to learn many new commands to set up a Python virtual environment. Just install `standalone-venv` and run it, and you've got your environment. No previous Python interpreter is needed.
 
 What are the limitations of this tool?
 * supports installing only a single Python interpreter at a time for a project. It does not support installing multiple Python interpreters with different versions for the same project.
   * This can be a problem for you if you are the author of a library that supports multiple versions of Python. If it is the case, it is recommended to use [pyenv](https://github.com/pyenv/pyenv) or [asdf](https://github.com/asdf-vm/asdf).
-* supports only Python 3.7+, older versions are not supported.
-* consumes more disk space than tools that keep a single version of the Python interpreter in `$HOME` (pyenv, asdf), as the interpreter is copied to every project (300 MB).
+* supports only CPython 3.7+, other interpreters and older versions are not supported.
+* consumes more disk space than tools that keep a single version of the Python interpreter in `$HOME` (pyenv, asdf), as the interpreter is copied to every project (100s of MBs).
 
 ## installation
 
@@ -200,9 +200,7 @@ Thanks to the environment variables set above, pipx will install all the tools i
 
 ## standalone environment structure
 
-This section describes the structure of the standalone environment directory.
-
-This standalone environment includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.standalone-venv` directory is the following:
+This standalone environment directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.standalone-venv` directory is the following:
 * `interpreter` interpreter directory including `bin`, `include`, etc...
 * `venv` venv directory including `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
 
