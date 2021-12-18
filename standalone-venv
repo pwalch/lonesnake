@@ -11,9 +11,17 @@ readonly STANDALONE_DIRNAME=".standalone-venv"
 readonly CACHE_DIR="$HOME/.cache/standalone-venv"
 readonly DEFAULT_STANDALONE_VERSION="3.10.1"
 
+# Color markers
+readonly CLR_BOLD="\033[1m"  # bold
+readonly CLR_UDL="\033[4m"  # underline
+readonly CLR_RED="\033[31m"  # red
+readonly CLR_BGR="\033[2m"  # background
+readonly CLR_ITL="\033[3m"  # italic
+readonly CLR_END="\033[0m"  # end-marker
+
 function usage() {
-    echo -e "Usage: \033[1m$PROGNAME\033[0m" \
-        "[\033[1m--cpython-version\033[0m \033[4mVERSION\033[0m]"
+    echo -e "Usage: ${CLR_BOLD}${PROGNAME}${CLR_END}" \
+        "[${CLR_BOLD}--cpython-version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
     echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
@@ -21,8 +29,8 @@ function usage() {
     echo "interpreter."
     echo "The source and build files are cached in '$CACHE_DIR'."
     echo
-    echo -e "\033[1mOPTIONS\033[0m"
-    echo -e "  \033[1m--cpython-version\033[0m \033[4mVERSION\033[0m"
+    echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
+    echo -e "  ${CLR_BOLD}--cpython-version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version" \
         "$DEFAULT_STANDALONE_VERSION"
@@ -36,14 +44,14 @@ function usage() {
 }
 
 function print_python_deps() {
-    echo -e "\033[1mDEPENDENCIES\033[0m"
+    echo -e "${CLR_BOLD}DEPENDENCIES${CLR_END}"
     echo "  📝 Make sure you have installed all the dependencies that are necessary"
     echo "     to compile the CPython interpreter. Check out the docs for more details"
     echo "     about how to do it for your OS."
 }
 
 function error_out() {
-    echo -e "\033[31m[ERROR] $*\033[0m" >&2
+    echo -e "${CLR_RED}[ERROR] $*${CLR_END}" >&2
     exit 1
 }
 
@@ -70,7 +78,7 @@ function main() {
     check_cpython_version_valid "$standalone_version"
 
     echo -e "We are going to install a standalone Python environment in directory"
-    echo -e "\033[1m${STANDALONE_DIRNAME}\033[0m, which will include the" \
+    echo -e "${CLR_BOLD}${STANDALONE_DIRNAME}${CLR_END}, which will include the" \
         "CPython $standalone_version interpreter"
     echo -e "as well as a venv based on this interpreter."
     echo
@@ -91,7 +99,7 @@ function main() {
     local cache_source_dir="${CACHE_DIR}/${standalone_version}"
     ensure_cache_dir "$cache_source_dir" "$standalone_version"
 
-    echo -e "\033[1mCPYTHON INTERPRETER COMPILATION & INSTALLATION\033[0m"
+    echo -e "${CLR_BOLD}CPYTHON INTERPRETER COMPILATION & INSTALLATION${CLR_END}"
     local standalone_interpreter_rel_dir="${STANDALONE_DIRNAME}/interpreter"
     local standalone_interpreter_dir="${PWD}/${STANDALONE_DIRNAME}/interpreter"
     compile_and_install_cpython "$cache_source_dir" "$python_minor_version" \
@@ -101,13 +109,13 @@ function main() {
     verify_interpreter "$STANDALONE_VERSION" "$standalone_rel_bin"
     echo
 
-    echo -e "\033[1mVENV INSTALLATION\033[0m"
+    echo -e "${CLR_BOLD}VENV INSTALLATION${CLR_END}"
     local venv_rel_dir="${STANDALONE_DIRNAME}/venv"
     install_venv "$venv_rel_dir" "$standalone_rel_bin"
 
     echo
 
-    echo -e "\033[1mSUMMARY\033[0m"
+    echo -e "${CLR_BOLD}SUMMARY${CLR_END}"
     print_install_success "$STANDALONE_DIRNAME" "$standalone_interpreter_rel_dir" \
         "$venv_rel_dir"
 
@@ -338,7 +346,7 @@ function skip_compile_interpreter() {
         "so skipping compilation"
     echo "     and moving directly to installation. If you wish to remove the cache,"
     echo "     you can run this command:"
-    echo -e "       \033[2mrm -rf ${cache_source_dir}\033[0m"
+    echo -e "       ${CLR_BGR}rm -rf ${cache_source_dir}${CLR_END}"
 }
 
 function install_venv() {
@@ -399,8 +407,9 @@ function print_install_success() {
 
     if [[ -d "./.git" ]]; then
         if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore"; then
-            echo -e "⚠️  Don't forget to add a line for it in your \033[1m.gitignore\033[0m:"
-            echo -e "  \033[2m/${STANDALONE_DIRNAME}/\033[0m"
+            echo -e "⚠️  Don't forget to add a line for it in your" \
+                "${CLR_BOLD}.gitignore${CLR_END}:"
+            echo -e "  ${CLR_BGR}/${STANDALONE_DIRNAME}/${CLR_END}"
             echo
         fi
     fi
@@ -409,12 +418,12 @@ function print_install_success() {
 function print_activation_instructions() {
     local venv_rel_dir="$1"
 
-    echo -e "\033[1mACTIVATION INSTRUCTIONS\033[0m"
+    echo -e "${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}"
     echo "You can activate your environment with the following command:"
-    echo -e "  \033[2msource ${venv_rel_dir}/bin/activate\033[0m"
+    echo -e "  ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}"
     echo
     echo -e "💡 Please note that there are solutions in the documentation to" \
-        "\033[3mautomatically\033[0m"
+        "${CLR_ITL}automatically${CLR_END}"
     echo "activate the venv."
     echo
 }
