@@ -412,7 +412,7 @@ function print_install_success() {
     echo
 
     if [[ -d "./.git" ]]; then
-        if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore"; then
+        if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore" &> /dev/null; then
             echo -e "⚠️  Don't forget to add a line for it in your" \
                 "${CLR_BOLD}.gitignore${CLR_END}:"
             echo -e "  ${CLR_BGR}/${STANDALONE_DIRNAME}/${CLR_END}"
