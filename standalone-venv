@@ -7,8 +7,14 @@
 set -euo pipefail
 
 readonly PROGNAME=$(basename "$0")
+
+# New directory that will be created in the current working directory
+# to host the Python interpreter and the venv.
 readonly STANDALONE_DIRNAME=".standalone-venv"
+
+# Directory where the Python interpreter source code and build files will be stored.
 readonly CACHE_DIR="$HOME/.cache/standalone-venv"
+
 readonly DEFAULT_STANDALONE_VERSION="3.10.1"
 
 # Color markers
