@@ -48,7 +48,7 @@ What are the limitations of this tool?
 * download the `standalone-venv` Bash script to a directory in your `$PATH`. You can put it anywhere, but here are some instructions to download it to `~/.local/bin`:
   * `mkdir -p ~/.local/bin`
   * make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your interactive shell start-up script (e.g. `.bashrc` or `.zshrc`)
-  * `curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.1.0/standalone-venv`
+  * `curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.1.1/standalone-venv`
   * `chmod u+x ~/.local/bin/standalone-venv`
 * check that the script is accessible by running `standalone-venv --help`
 
