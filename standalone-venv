@@ -258,8 +258,13 @@ function compile_interpreter() {
         "cache, so we are going to download its source code from 'python.org' and" \
         "compile it."
 
+    local python_org_url="https://www.python.org"
+    if ! curl -sI --output /dev/null --fail "$python_org_url"; then
+        error_out "Could not reach 'python.org', do you have Internet access?"
+    fi
+
     # Check whether requested Python interpreter version exists on 'python.org' 
-    local ftp_base_url="https://www.python.org/ftp/python"
+    local ftp_base_url="${python_org_url}/ftp/python"
     local ftp_version_path="${standalone_version}/Python-${standalone_version}.tgz"
     local python_source_url="${ftp_base_url}/${ftp_version_path}"
     if ! curl -sI --output /dev/null --fail "$python_source_url"; then
