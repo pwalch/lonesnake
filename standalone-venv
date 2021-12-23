@@ -331,6 +331,19 @@ function compile_interpreter() {
     local compile_duration=$((end_compile_date - start_compile_date))
     echo "  ✅ compiled Python interpreter in ${compile_duration}s."
 
+    echo "➖ Checking that the Python interpreter was compiled with OpenSSL..."
+    local cache_dir_python_bin="${cache_source_dir}/python"
+    local python_ssl_stdout
+    if ! python_ssl_stdout="$( \
+            "$cache_dir_python_bin" -c "import ssl; print(ssl.OPENSSL_VERSION)" \
+        )"; then
+        echo "[ERROR] Detailed logs for import of 'ssl' package in Python:"
+        echo "$python_ssl_stdout"
+        error_out "Could not import 'ssl' with the Python interpreter that was built" \
+            "at ${cache_dir_python_bin}. Please check your OpenSSL installation."
+    fi
+    echo "  ✅ The Python interpreter's 'OPENSSL_VERSION' is: ${python_ssl_stdout}"
+
     echo "This file indicates that the CPython interpreter has been fully built in" \
         "this directory. We use this to know whether 'make install' can be run." \
         "without having to re-compile." \
