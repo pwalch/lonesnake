@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROGNAME=$(basename "$0")
+readonly PROGNAME="$(basename "$0")"
 
 # New directory that will be created in the current working directory
 # to host the Python interpreter and the venv.
@@ -94,8 +94,8 @@ function main() {
     # Extract Python minor version (X.Y), as we will need the name of the
     # interpreter executable later, after compiling from source.
     local python_minor_version
-    if ! python_minor_version=$(echo "$standalone_version" 2>&1 | \
-            grep -Eo '^[0-9]+\.[0-9]+'); then
+    if ! python_minor_version="$(echo "$standalone_version" 2>&1 | \
+            grep -Eo '^[0-9]+\.[0-9]+')"; then
         error_out "Could not find Python minor version for fully" \
             "specified version '$standalone_version'."
     fi
@@ -222,7 +222,7 @@ function verify_interpreter() {
         "returns the expected version..."
 
     local version_stdout
-    if ! version_stdout=$("$standalone_rel_bin" --version); then
+    if ! version_stdout="$("$standalone_rel_bin" --version)"; then
         error_out "Could not get Python version using interpreter: $standalone_rel_bin"
     fi
 
@@ -247,7 +247,7 @@ function compile_interpreter() {
     # to the CPython configure script with '--with-openssl'.
     local with_openssl_str=""
     if [[ "$OSTYPE" == "darwin"* ]]; then
-        if ! brew_openssl_prefix=$(brew --prefix openssl); then
+        if ! brew_openssl_prefix="$(brew --prefix openssl)"; then
             error_out "You are on macOS, but we the OpenSSL path cannot be found" \
                 "with 'brew --prefix openssl'. Did you install 'openssl' with brew?"
         fi
@@ -295,9 +295,9 @@ function compile_interpreter() {
     # We pass '--prefix ""' so all paths are relative to 'DESTDIR' at the 'make install'
     # step later. If we don't set it, it is in /usr/local by default.
     local configure_output
-    if ! configure_output=$(pushd "$cache_source_dir" && \
+    if ! configure_output="$(pushd "$cache_source_dir" && \
             ./configure --prefix="" "$with_openssl_str" 2>&1 &&
-            popd); then
+            popd)"; then
         echo "[ERROR] Detailed logs for '.configure':"
         echo "$configure_output"
         echo
@@ -315,7 +315,7 @@ function compile_interpreter() {
     local make_output
     # On python.org, the compilation tutorial suggests to use 'make -j2'.
     # https://devguide.python.org/setup/#install-dependencies
-    if ! make_output=$(make -C "$cache_source_dir" -j2 2>&1); then
+    if ! make_output="$(make -C "$cache_source_dir" -j2 2>&1)"; then
         echo "[ERROR] Detailed logs for 'make -j2':"
         echo "$make_output"
         error_out "Could not compile Python interpreter" \
@@ -339,8 +339,8 @@ function install_interpreter() {
     echo "➖ Installing Python interpreter to '$standalone_interpreter_rel_dir'..."
     local start_install_date="$SECONDS"
     local make_install_output
-    if ! make_install_output=$(export DESTDIR="$standalone_interpreter_dir" && \
-            make -C "$cache_source_dir" install 2>&1); then
+    if ! make_install_output="$(export DESTDIR="$standalone_interpreter_dir" && \
+            make -C "$cache_source_dir" install 2>&1)"; then
         echo "[ERROR] Detailed logs for 'make install':"
         echo "$make_install_output"
         error_out "Could not run 'make install' in '$cache_source_dir'."
@@ -380,7 +380,7 @@ function install_venv() {
     # '--upgrade-deps' option, but this is only available from Python 3.9 so we
     # upgrade manually.
     local pip_upgrade_output
-    if ! pip_upgrade_output=$("$venv_pip" install --upgrade pip setuptools 2>&1); then
+    if ! pip_upgrade_output="$("$venv_pip" install --upgrade pip setuptools 2>&1)"; then
         echo "$pip_upgrade_output"
         echo
         error_out "Could not upgrade venv Pip at '$venv_pip'."
@@ -391,8 +391,8 @@ function install_venv() {
     echo "➖ Installing complimentary Python packages (${complimentary_packages[*]})" \
         "inside venv..."
     local complimentary_packages_output
-    if ! complimentary_packages_output=$( \
-            "$venv_pip" install "${complimentary_packages[@]}" 2>&1); then
+    if ! complimentary_packages_output="$( \
+            "$venv_pip" install "${complimentary_packages[@]}" 2>&1)"; then
         echo "$complimentary_packages_output"
         echo
         error_out "Could not install all complimentary packages inside" \
@@ -407,7 +407,7 @@ function print_install_success() {
     local venv_rel_dir="$3"
 
     local standalone_dir_size
-    if ! standalone_dir_size=$(du -sh "$standalone_dirname" | cut -f1); then
+    if ! standalone_dir_size="$(du -sh "$standalone_dirname" | cut -f1)"; then
         error_out "Could not extract size of standalone directory '$standalone_dirname'."
     fi
     echo "The Python standalone environment has been installed successfully in"
