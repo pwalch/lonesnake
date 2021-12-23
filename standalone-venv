@@ -74,6 +74,12 @@ function check_prerequisites() {
     if [[ ! -x "$(command -v make)" ]]; then
         error_out "'make' command not found, please install it."
     fi
+
+    if [[ "$OSTYPE" == "darwin"* ]] && [[ ! -x "$(command -v brew)" ]]; then
+        error_out "'brew' command not found even though you are on macOS, please" \
+            "install Homebrew."
+    fi
+
 }
 
 function main() {
