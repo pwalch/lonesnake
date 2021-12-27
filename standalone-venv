@@ -118,7 +118,7 @@ function main() {
         "$standalone_interpreter_rel_dir" "$standalone_interpreter_dir"
 
     local standalone_rel_bin="${standalone_interpreter_rel_dir}/bin/python${python_minor_version}"
-    verify_interpreter "$STANDALONE_VERSION" "$standalone_rel_bin"
+    verify_interpreter "$standalone_version" "$standalone_rel_bin"
     echo
 
     echo -e "${CLR_BOLD}VENV INSTALLATION${CLR_END}"
@@ -458,11 +458,11 @@ function print_activation_instructions() {
     echo
 }
 
-STANDALONE_VERSION="$DEFAULT_STANDALONE_VERSION"
+arg_standalone_version="$DEFAULT_STANDALONE_VERSION"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --cpython-version)
-            STANDALONE_VERSION="$2"
+            arg_standalone_version="$2"
             shift
         ;;
 
@@ -478,4 +478,4 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-main "$STANDALONE_VERSION"
+main "$arg_standalone_version"
