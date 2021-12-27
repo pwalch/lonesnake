@@ -54,83 +54,12 @@ What are the limitations of this tool?
 
 ## usage
 
-**help message**
-
-```
-Usage: standalone-venv [--cpython-version VERSION]
-
-Creates a standalone Python environment in a new directory named 
-'.standalone-venv' inside your working directory. This environment includes
-a CPython interpreter built from source and a venv created with that
-interpreter.
-The source and build files are cached in '/home/pierre/.cache/standalone-venv'.
-
-OPTIONS
-  --cpython-version VERSION
-       pass a version number to install the CPython interpreter
-       version of your choice. By default, the version 3.10.1
-       is installed. Versions before Python 3.7 are not supported.
-       That is, Python 2.7.X and 3.6.X are not supported.
-       You can find the list of all Python releases on this page:
-       https://www.python.org/downloads/
-
-DEPENDENCIES
-  📝 Make sure you have installed all the dependencies that are necessary
-     to compile the CPython interpreter. Check out the docs for more details
-     about how to do it for your OS.
-```
-
 **example commands**
 
 * `standalone-venv`
   * default interpreter version (see `--help`) + empty venv
 * `standalone-venv --version 3.9.9`
   * Python 3.9.9 interpreter + empty venv
-
-**example output**
-
-```
-➜ standalone-venv
-We are going to install a standalone Python environment in directory
-.standalone-venv, which will include the CPython 3.10.1 interpreter
-as well as a venv based on this interpreter.
-
-CPYTHON INTERPRETER COMPILATION & INSTALLATION
-➖ Looking for a previous build of CPython 3.10.1 interpreter in
-the cache at '/home/pierre/.cache/standalone-venv/3.10.1'...
-  ℹ️  No previous build of CPython 3.10.1 was found in the cache, so we are going to download its source code from 'python.org' and compile it.
-➖ Downloading Python interpreter source code from 'https://www.python.org/ftp/python/3.10.1/Python-3.10.1.tgz'...
-  ✅ downloaded Python interpreter to '/home/pierre/.cache/standalone-venv/3.10.1'.
-➖ Running './configure' in Python interpreter source code directory '/home/pierre/.cache/standalone-venv/3.10.1'...
-  ✅ ran './configure' in 16s, ready to compile interpreter.
-➖ Compiling Python interpreter with 'make -j'...
-  ✅ compiled Python interpreter in 32s.
-➖ Installing Python interpreter to '.standalone-venv/interpreter'...
-  ✅ installed Python interpreter in 11s.
-➖ Verifying that the interpreter located at '.standalone-venv/interpreter/bin/python3.10' runs and returns the expected version...
-  ✅ ran 'python --version' using the interpreter we just compiled. It returned 'Python 3.10.1' as expected.
-
-VENV INSTALLATION
-➖ Creating a Python venv at '.standalone-venv/venv' using the interpreter we built...
-  ✅ created Python venv
-➖ Upgrading Pip and setuptools inside venv using '.standalone-venv/venv/bin/pip'...
-  ✅ upgraded Pip inside venv
-➖ Installing complimentary Python packages (wheel) inside venv...
-  ✅ installed complimentary packages inside venv
-
-SUMMARY
-The Python standalone environment has been installed successfully in
-'.standalone-venv'! (💽 343M)
-You can find the interpreter in '.standalone-venv/interpreter'
-and the venv in '.standalone-venv/venv'.
-
-ACTIVATION INSTRUCTIONS
-You can activate your environment with the following command:
-  source .standalone-venv/venv/bin/activate
-
-💡 Please note that there are solutions in the documentation to automatically
-activate the venv.
-```
 
 ## automated activation
 
