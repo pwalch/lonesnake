@@ -6,7 +6,8 @@
 
 set -euo pipefail
 
-readonly PROGNAME="$(basename "$0")"
+PROGNAME="$(basename "$0")"
+readonly PROGNAME
 
 # New directory that will be created in the current working directory
 # to host the Python interpreter and the venv.
