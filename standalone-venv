@@ -334,6 +334,13 @@ function compile_interpreter() {
 
     echo "➖ Checking that the Python interpreter was compiled with OpenSSL..."
     local cache_dir_python_bin="${cache_source_dir}/python"
+    if [[ "$OSTYPE" = "darwin"* ]]; then
+        # On macOS, the Python executable is created with a '.exe' suffix. This is
+        # because the default file system on macOS is case insensitive and the
+        # executable would therefore be confused with the 'Python' directory.
+        cache_dir_python_bin="${cache_source_dir}/python.exe"
+    fi
+
     local python_ssl_stdout
     if ! python_ssl_stdout="$( \
             "$cache_dir_python_bin" -c "import ssl; print(ssl.OPENSSL_VERSION)" \
