@@ -28,7 +28,7 @@ readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
     echo -e "Usage: ${CLR_BOLD}${PROGNAME}${CLR_END}" \
-        "[${CLR_BOLD}--cpython-version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]"
+        "[${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
     echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
@@ -37,7 +37,7 @@ function usage() {
     echo "The source and build files are cached in '$CACHE_DIR'."
     echo
     echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
-    echo -e "  ${CLR_BOLD}--cpython-version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
+    echo -e "  ${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version" \
         "$DEFAULT_STANDALONE_VERSION"
@@ -462,7 +462,7 @@ function print_activation_instructions() {
 arg_standalone_version="$DEFAULT_STANDALONE_VERSION"
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --cpython-version)
+        --version)
             arg_standalone_version="$2"
             shift
         ;;
