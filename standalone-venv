@@ -341,6 +341,11 @@ function compile_interpreter() {
         cache_dir_python_bin="${cache_source_dir}/python.exe"
     fi
 
+    if [[ ! -f "$cache_dir_python_bin" ]]; then
+        error_out "Could not find Python binary at location '${cache_dir_python_bin}'" \
+            "in source directory after compilation."
+    fi
+
     local python_ssl_stdout
     if ! python_ssl_stdout="$( \
             "$cache_dir_python_bin" -c "import ssl; print(ssl.OPENSSL_VERSION)" \
