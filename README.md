@@ -67,7 +67,7 @@ In most cases, you don't want to activate your Python environment manually every
 
 There are two main auto-activation use cases for which we provide recommendations:
 * local environment for a project, where the environment activates when entering the project directory
-* global environment for a user, where the environment activates when you opening the shell
+* global environment for a user, where the environment activates when starting a new shell
 
 ### local environment auto-activation with direnv
 
