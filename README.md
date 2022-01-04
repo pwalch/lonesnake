@@ -63,7 +63,7 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.3.0/standalone-venv && \
+  curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.4.0/standalone-venv && \
   chmod u+x ~/.local/bin/standalone-venv
 ```
 
