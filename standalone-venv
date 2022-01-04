@@ -28,7 +28,8 @@ readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
     echo -e "Usage: ${CLR_BOLD}${PROGNAME}${CLR_END}" \
-        "[${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]"
+        "[${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
+        "[${CLR_BOLD}--force${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
     echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
@@ -45,6 +46,12 @@ function usage() {
     echo "       That is, Python 2.7.X and 3.6.X are not supported."
     echo "       You can find the list of all Python releases on this page:"
     echo "       https://www.python.org/downloads/"
+    echo
+    echo -e "  ${CLR_BOLD}--force${CLR_END}"
+    echo "      By default, the user is asked to confirm via stdin whether an existing"
+    echo "      '$STANDALONE_DIRNAME' directory should be deleted. If '--force' is"
+    echo "      passed, no question is asked and we always proceed with deletion. Use"
+    echo "      this flag in your non-interactive scripts."
     echo
     print_python_deps
     echo
@@ -85,6 +92,7 @@ function check_prerequisites() {
 
 function main() {
     local standalone_version="$1"
+    local force_removal="$2"
 
     check_prerequisites
 
@@ -96,7 +104,7 @@ function main() {
     echo -e "as well as a venv based on this interpreter."
     echo
 
-    remove_standalone_dir "$STANDALONE_DIRNAME"
+    remove_standalone_dir "$STANDALONE_DIRNAME" "$force_removal"
 
     # Extract Python minor version (X.Y), as we will need the name of the
     # interpreter executable later, after compiling from source.
@@ -149,17 +157,39 @@ function check_cpython_version_valid() {
 
 function remove_standalone_dir() {
     local standalone_dir_path="$1"
+    local force_removal="$2"
 
-    # Remove standalone directory if it exists
-    if [[ -d "$standalone_dir_path" ]]; then
-        echo "🗑️  An environment already exists at '$standalone_dir_path'." \
-            "Deleting it now so we can start with a clean state."
-        if ! rm -rf "$standalone_dir_path"; then
-            error_out "Could not remove old environment at '$standalone_dir_path'."
-        fi
-        echo "  ✅ deleted old environment"
-        echo
+    # If standalone directory does not exist, we don't need to delete it
+    if [[ ! -d "$standalone_dir_path" ]]; then
+        return
     fi
+
+    local answer="y"
+    # When removal of directory is not forced, we ask the user
+    if [[ "$force_removal" -eq 0 ]]; then
+        echo "❓ An environment already exists at '$standalone_dir_path'."
+        read -rp "   Do you want to remove it? (y/n) " answer
+        case "$answer" in
+            y|Y|yes|YES)
+                # If yes, we are continuing, in other cases we abort.
+            ;;
+            n|N|no|NO)
+                error_out "Cannot continue without removing existing environment." \
+                    "Aborting."
+            ;;
+            *)
+                error_out "Please re-try and answer 'y' or 'n'."
+            ;;
+        esac
+    fi
+
+    echo "🗑️  Deleting old '$standalone_dir_path' directory now so we can start with"
+    echo "   a clean state."
+    if ! rm -rf "$standalone_dir_path"; then
+        error_out "Could not remove old environment directory at '$standalone_dir_path'."
+    fi
+    echo "  ✅ deleted old environment directory"
+    echo
 }
 
 function check_minor_version() {
@@ -472,11 +502,16 @@ function print_activation_instructions() {
 }
 
 arg_standalone_version="$DEFAULT_STANDALONE_VERSION"
+force_removal=0
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --version)
             arg_standalone_version="$2"
             shift
+        ;;
+
+        --force)
+            force_removal=1
         ;;
 
         --help|-h)
@@ -491,4 +526,4 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-main "$arg_standalone_version"
+main "$arg_standalone_version" "$force_removal"
