@@ -26,7 +26,7 @@ brew tap pwalch/standalone-venv
 brew install standalone-venv
 ```
 
-### Manual installation
+### Linux and manual installation
 
 <details>
 <summary>install the CPython build dependencies and <code>curl</code>, depending on your OS</summary>
