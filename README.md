@@ -15,6 +15,7 @@ What are the limitations of this tool?
 * supports installing only a single Python interpreter version at a time for a specific project
   * if you need to support multiple versions simultaneously with a fallback order, use [pyenv](https://github.com/pyenv/pyenv) or [asdf](https://github.com/asdf-vm/asdf).
 * supports only CPython 3.7+, older CPython versions and other Python interpreters (e.g. PyPy) are not supported
+* supports only macOS and Linux
 * consumes more disk space than tools that keep a single version of the Python interpreter in `$HOME` (pyenv, asdf), as the interpreter is copied to every project
 
 ## installation
@@ -119,7 +120,7 @@ sudo pacman -S direnv
 Once direnv is set up, install a standalone environment in your project and have it auto-activate:
 
 * `cd YOUR_PROJECT`
-* `standalone-venv`
+* `standalone-venv` (pass a `--version` if needed, see `--help`)
 * `touch .envrc` and fill it with this:
 
 ```bash
@@ -133,7 +134,7 @@ export VIRTUAL_ENV="$PWD/${VENV_REL_DIR}"
 * check that `which python` points to your project's standalone environment
   * if yes, auto-activation is properly enabled!
 
-> ℹ️ In case of trouble, you can get rid of the environment by removing `.envrc` and the `.standalone-venv` directory at the root of your project.
+> ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .standalone-venv .envrc` at the root of your project.
 
 ### global environment auto-activation for a user
 
@@ -154,7 +155,7 @@ export VIRTUAL_ENV="$HOME/.standalone-venv/venv"
 * check that `which python` points to your standalone environment
   * if yes, auto-activation is properly enabled!
 
-> ℹ️ In case of trouble, you can get rid of the environment by removing the export statements from your interactive shell start-up script and running `rm -rf "$HOME/.standalone-venv"`.
+> ℹ️ In case of trouble, you can get rid of the environment by removing the export statements from your `.bashrc` or `.zshrc` and running `rm -rf ~/.standalone-venv`.
 
 **pipx support**
 
@@ -176,7 +177,7 @@ export PATH="$PIPX_BIN_DIR:$PATH"
 * `pip install pipx`
 * from now on, use `pipx install` to install Python CLI tools such as `httpie`
 
-> ℹ️ In case of trouble, you can get rid of your pipx installation by removing the export statements from your shell start-up script and running `rm -rf ~/.standalone-venv/pipx_*`.
+> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.standalone-venv/pipx_*` and `pip uninstall pipx`.
 
 ## standalone environment structure
 
