@@ -126,8 +126,8 @@ Once direnv is set up, install a standalone environment in your project and have
 ```bash
 # standalone-venv auto-activation for the project directory
 export VIRTUAL_ENV_DISABLE_PROMPT=1  # direnv doesn't support updating the prompt
-export PATH="$PWD/${VENV_REL_DIR}/bin:$PATH"
-export VIRTUAL_ENV="$PWD/${VENV_REL_DIR}"
+export PATH="${PWD}/${VENV_REL_DIR}/bin:${PATH}"
+export VIRTUAL_ENV="${PWD}/${VENV_REL_DIR}"
 ```
 
 * `direnv allow .`
@@ -147,8 +147,8 @@ If you intended to use your standalone environment as a global Python environmen
 ```bash
 # global standalone-venv auto-activation
 export VIRTUAL_ENV_DISABLE_PROMPT=1  # no prompt prefix everywhere
-export PATH="$HOME/.standalone-venv/venv/bin:$PATH"
-export VIRTUAL_ENV="$HOME/.standalone-venv/venv"
+export PATH="${HOME}/.standalone-venv/venv/bin:${PATH}"
+export VIRTUAL_ENV="${HOME}/.standalone-venv/venv"
 ```
 
 * exit your shell and start a new one
@@ -168,9 +168,9 @@ After setting up a global standalone environment, it is recommended to install `
 # configure it to use sub-directories of the standalone environment:
 # "~/.standalone-venv/pipx_bin" and "~/.standalone-venv/pipx_home". Thanks to this,
 # we keep everything related to the global environment in the same place.
-export PIPX_HOME="$HOME/.standalone-venv/pipx_home"
-export PIPX_BIN_DIR="$HOME/.standalone-venv/pipx_bin"
-export PATH="$PIPX_BIN_DIR:$PATH"
+export PIPX_HOME="${HOME}/.standalone-venv/pipx_home"
+export PIPX_BIN_DIR="${HOME}/.standalone-venv/pipx_bin"
+export PATH="${PIPX_BIN_DIR}:$PATH"
 ```
 
 * exit your shell and start a new one
