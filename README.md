@@ -126,11 +126,11 @@ Once direnv is set up, install a standalone environment in your project and have
 ```bash
 # standalone-venv auto-activation for the project directory
 export VIRTUAL_ENV_DISABLE_PROMPT=1  # direnv doesn't support updating the prompt
-export PATH="${PWD}/${VENV_REL_DIR}/bin:${PATH}"
-export VIRTUAL_ENV="${PWD}/${VENV_REL_DIR}"
+export PATH="${PWD}/.standalone-venv/venv/bin:${PATH}"
+export VIRTUAL_ENV="${PWD}/.standalone-venv/venv"
 ```
 
-* `direnv allow .`
+* `direnv allow`
 * check that `which python` points to your project's standalone environment
   * if yes, auto-activation is properly enabled!
 
