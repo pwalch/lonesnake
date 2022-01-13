@@ -3,14 +3,14 @@
 Commands to run to record the demo:
 
 * `cd workspace`
-* `rm -rf ~/.cache/standalone-venv ./.standalone-venv`
-* `asciinema rec demo.cast`
+* `rm -rf ~/.cache/lonesnake ./.lonesnake`
+* `asciinema rec ../lonesnake-demo.cast`
 * `which python`
 * `python --version`
-* `standalone-venv`
+* `lonesnake`
 * `ls -al`
-* `ls -al .standalone-venv`
-* `source ...`
+* `ls -al .lonesnake`
+* `source source .lonesnake/venv/bin/activate`
 * `python --version`
 * `pip list`
 * CTRL+D

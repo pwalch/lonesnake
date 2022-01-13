@@ -1,15 +1,15 @@
-# standalone-venv
+# lonesnake
 
-`standalone-venv` sets up a self-contained Python environment with an interpreter and a venv in single directory. It can be used to create fully isolated Python environments for projects, as well as setting up a global Python environment.
+`lonesnake` sets up a self-contained Python environment with an interpreter and a venv in single directory. It can be used to create fully isolated Python environments for projects, as well as setting up a global Python environment.
 
 It can be seen as a simpler variant of [pyenv](https://github.com/pyenv/pyenv) for people who do not need to develop against multiple versions of Python simultaneously for the same project.
 
-[![asciicast](https://asciinema.org/a/455461.svg)](https://asciinema.org/a/455461)
+[![asciicast](https://asciinema.org/a/JaCIWWQaQ3TnZLfRqUB55S2Dl.svg)](https://asciinema.org/a/JaCIWWQaQ3TnZLfRqUB55S2Dl)
 
 What does this tool provide compared to other tools?
 * **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter as well as a venv. It is protected against breaking updates by your package manager or you blowing up your environment in one of your projects.
 * **transparent configuration and structure**. No sourcing of slow tool-specific initialization scripts. Auto-activation of venv is enabled with explicit exports.
-* **easy venv setup**. No need to learn many new commands to set up a Python virtual environment. Just install `standalone-venv` and run it, and you've got your environment. No previous Python interpreter is needed.
+* **easy venv setup**. No need to learn many new commands to set up a Python virtual environment. Just install `lonesnake` and run it, and you've got your environment. No previous Python interpreter is needed.
 
 What are the limitations of this tool?
 * supports installing only a single Python interpreter version at a time for a specific project
@@ -23,8 +23,8 @@ What are the limitations of this tool?
 ### macOS installation with Brew
 
 ```bash
-brew tap pwalch/standalone-venv
-brew install standalone-venv
+brew tap pwalch/lonesnake
+brew install lonesnake
 ```
 
 ### Linux and manual installation
@@ -60,16 +60,16 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 
 <details>
-<summary>download <code>standalone-venv</code> to <code>~/.local/bin</code> or some other directory in your <code>PATH</code></summary>
+<summary>download <code>lonesnake</code> to <code>~/.local/bin</code> or some other directory in your <code>PATH</code></summary>
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/standalone-venv https://github.com/pwalch/standalone-venv/releases/download/0.4.0/standalone-venv && \
-  chmod u+x ~/.local/bin/standalone-venv
+  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.4.0/lonesnake && \
+  chmod u+x ~/.local/bin/lonesnake
 ```
 
 * make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your `.bashrc` (Bash) or `.zshrc` (ZSH)
-* check that the script is accessible with `standalone-venv --help`
+* check that the script is accessible with `lonesnake --help`
 
 </details>
 
@@ -77,9 +77,9 @@ mkdir -p ~/.local/bin && \
 
 **example commands**
 
-* `standalone-venv`
+* `lonesnake`
   * creates an environment with the most recent CPython version and an empty venv
-* `standalone-venv --version 3.9.9`
+* `lonesnake --version 3.9.9`
   * creates an environment with CPython 3.9.9 and an empty venv
 
 ## automated activation
@@ -120,42 +120,42 @@ sudo pacman -S direnv
 Once direnv is set up, install a standalone environment in your project and have it auto-activate:
 
 * `cd YOUR_PROJECT`
-* `standalone-venv` (pass a `--version` if needed, see `--help`)
+* `lonesnake` (pass a `--version` if needed, see `--help`)
 * `touch .envrc` and fill it with this:
 
 ```bash
-# standalone-venv auto-activation for the project directory
+# lonesnake auto-activation for the project directory
 export VIRTUAL_ENV_DISABLE_PROMPT=1  # direnv doesn't support updating the prompt
-export PATH="${PWD}/.standalone-venv/venv/bin:${PATH}"
-export VIRTUAL_ENV="${PWD}/.standalone-venv/venv"
+export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
+export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 ```
 
 * `direnv allow`
 * check that `which python` points to your project's standalone environment
   * if yes, auto-activation is properly enabled!
 
-> ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .standalone-venv .envrc` at the root of your project.
+> ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
 ### global environment auto-activation for a user
 
 If you intended to use your standalone environment as a global Python environment for your user, you want it to activate automatically when you start a new shell:
 
 * `cd ~`
-* `standalone-venv`
+* `lonesnake`
 * in your `.bashrc` (Bash) or `.zshrc` (ZSH), append the following:
 
 ```bash
-# global standalone-venv auto-activation
+# global lonesnake auto-activation
 export VIRTUAL_ENV_DISABLE_PROMPT=1  # no prompt prefix everywhere
-export PATH="${HOME}/.standalone-venv/venv/bin:${PATH}"
-export VIRTUAL_ENV="${HOME}/.standalone-venv/venv"
+export PATH="${HOME}/.lonesnake/venv/bin:${PATH}"
+export VIRTUAL_ENV="${HOME}/.lonesnake/venv"
 ```
 
 * exit your shell and start a new one
 * check that `which python` points to your standalone environment
   * if yes, auto-activation is properly enabled!
 
-> ℹ️ In case of trouble, you can get rid of the environment by removing the export statements from your `.bashrc` or `.zshrc` and running `rm -rf ~/.standalone-venv`.
+> ℹ️ In case of trouble, you can get rid of the environment by removing the export statements from your `.bashrc` or `.zshrc` and running `rm -rf ~/.lonesnake`.
 
 **pipx support**
 
@@ -166,10 +166,10 @@ After setting up a global standalone environment, it is recommended to install `
 ```bash
 # By default, pipx stores its files in "~/.local/pipx" and "~/.local/bin", but we
 # configure it to use sub-directories of the standalone environment:
-# "~/.standalone-venv/pipx_bin" and "~/.standalone-venv/pipx_home". Thanks to this,
+# "~/.lonesnake/pipx_bin" and "~/.lonesnake/pipx_home". Thanks to this,
 # we keep everything related to the global environment in the same place.
-export PIPX_HOME="${HOME}/.standalone-venv/pipx_home"
-export PIPX_BIN_DIR="${HOME}/.standalone-venv/pipx_bin"
+export PIPX_HOME="${HOME}/.lonesnake/pipx_home"
+export PIPX_BIN_DIR="${HOME}/.lonesnake/pipx_bin"
 export PATH="${PIPX_BIN_DIR}:$PATH"
 ```
 
@@ -177,12 +177,12 @@ export PATH="${PIPX_BIN_DIR}:$PATH"
 * `pip install pipx`
 * from now on, use `pipx install` to install Python CLI tools such as `httpie`
 
-> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.standalone-venv/pipx_*` and `pip uninstall pipx`.
+> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `pip uninstall pipx`.
 
 ## standalone environment structure
 
-This standalone environment directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.standalone-venv` directory is the following:
+This standalone environment directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.lonesnake` directory is the following:
 * `interpreter` interpreter directory includes `bin`, `include`, etc...
 * `venv` venv directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
 
-Behind the scenes, `standalone-venv` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/standalone-venv/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.10.1`). These cache directories enable us to skip the compilation step when the CPython code was already compiled in the past for the requested version.
+Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.10.1`). These cache directories enable us to skip the compilation step when the CPython code was already compiled in the past for the requested version.
