@@ -506,6 +506,11 @@ force_removal=0
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --version)
+            if [ -z "${2+x}" ]; then
+                error_out "Please pass a version number, such as" \
+                    "'$DEFAULT_STANDALONE_VERSION'. Run '$PROGNAME --help' for more" \
+                    "details."
+            fi
             arg_standalone_version="$2"
             shift
         ;;
