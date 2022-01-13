@@ -119,6 +119,7 @@ sudo pacman -S direnv
 
 Once direnv is set up, install a standalone environment in your project and have it auto-activate:
 
+* start a new shell
 * `cd YOUR_PROJECT`
 * `lonesnake` (pass a `--version` if needed, see `--help`)
 * `touch .envrc` and fill it with this:
