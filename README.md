@@ -43,7 +43,7 @@ brew install curl openssl readline sqlite3 xz zlib
 
 # Ubuntu/Debian/Mint
 sudo apt-get update && sudo apt-get install -y \
-  curl make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+  make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
   libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev \
   libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
