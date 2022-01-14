@@ -16,7 +16,15 @@ readonly STANDALONE_DIRNAME=".lonesnake"
 # Directory where the Python interpreter source code and build files will be stored.
 readonly CACHE_DIR="$HOME/.cache/lonesnake"
 
-readonly DEFAULT_STANDALONE_VERSION="3.10.1"
+# Latest patch version number for each supported Python minor version
+readonly LATEST_PATCH_CP37="12"
+readonly LATEST_PATCH_CP38="12"
+readonly LATEST_PATCH_CP39="9"
+readonly LATEST_PATCH_CP310="1"
+
+# Default CPython version if the user does not request a specific version
+readonly DEFAULT_CP_MINOR="3.10"
+readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP310}"
 
 # Color markers
 readonly CLR_BOLD="\033[1m"  # bold
@@ -40,8 +48,7 @@ function usage() {
     echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
     echo -e "  ${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
     echo "       pass a version number to install the CPython interpreter"
-    echo "       version of your choice. By default, the version" \
-        "$DEFAULT_STANDALONE_VERSION"
+    echo "       version of your choice. By default, the version $DEFAULT_CP_VERSION"
     echo "       is installed. Versions before Python 3.7 are not supported."
     echo "       That is, Python 2.7.X and 3.6.X are not supported."
     echo "       You can find the list of all Python releases on this page:"
@@ -91,12 +98,72 @@ function check_prerequisites() {
 }
 
 function main() {
-    local standalone_version="$1"
+    local user_standalone_version="$1"
     local force_removal="$2"
 
     check_prerequisites
 
-    check_cpython_version_valid "$standalone_version"
+    # Extract the major + minor + patch number to variables
+    local cpython_major=""
+    local cpython_minor=""
+    local cpython_patch=""
+    if [[ $user_standalone_version =~ ^([0-9]+)\.([0-9]+)$ ]]; then
+        local cpython_major="${BASH_REMATCH[1]}"
+        local cpython_minor="${BASH_REMATCH[2]}"
+    elif [[ $user_standalone_version =~ ^([0-9]+)\.([0-9]+)\.([0-9]+)$ ]]; then
+        local cpython_major="${BASH_REMATCH[1]}"
+        local cpython_minor="${BASH_REMATCH[2]}"
+        local cpython_patch="${BASH_REMATCH[3]}"
+    else
+        error_out "The version number you passed '$user_standalone_version' does not" \
+            "follow the X.Y.Z or X.Y release formats. Please pass a version number" \
+            "like '$DEFAULT_CP_VERSION' or '${DEFAULT_CP_MINOR}'."
+    fi
+
+    check_cpython_major_minor_version "$cpython_major" "$cpython_minor"
+
+    # If the user provides just the major and the minor version numbers, we try to
+    # guess the patch version number.
+    if [[ -z "$cpython_patch" ]]; then
+        cpython_patch="$(guess_cpython_patch_number "$cpython_minor")"
+    fi
+
+    create_standalone_dir "$cpython_major" "$cpython_minor" "$cpython_patch"
+}
+
+function check_cpython_major_minor_version() {
+    local major_number="$1"
+    local minor_number="$2"
+
+    if [[ "$major_number" != "3" ]] || [[ "$minor_number" -lt "7" ]]; then
+        error_out "Python version '$major_number' that you requested is" \
+            "not supported. Please use Python 3.7+."
+    fi
+}
+
+function guess_cpython_patch_number() {
+    local minor="$1"
+
+    if [[ "$minor" == 7 ]]; then
+        echo "$LATEST_PATCH_CP37"
+    elif [[ "$minor" == 8 ]]; then
+        echo "$LATEST_PATCH_CP38"
+    elif [[ "$minor" == 9 ]]; then
+        echo "$LATEST_PATCH_CP39"
+    elif [[ "$minor" == 10 ]]; then
+        echo "$LATEST_PATCH_CP310"
+    else
+        error_out "Could not find a patch version number for the minor version" \
+            "'$cpython_patch' that you provided."
+    fi
+}
+
+function create_standalone_dir() {
+    local cpython_major="$1"
+    local cpython_minor="$2"
+    local cpython_patch="$3"
+
+    local standalone_version="${cpython_major}.${cpython_minor}.${cpython_patch}"
 
     echo -e "We are going to install a standalone Python environment in directory"
     echo -e "${CLR_BOLD}${STANDALONE_DIRNAME}${CLR_END}, which will include the" \
@@ -106,27 +173,17 @@ function main() {
 
     remove_standalone_dir "$STANDALONE_DIRNAME" "$force_removal"
 
-    # Extract Python minor version (X.Y), as we will need the name of the
-    # interpreter executable later, after compiling from source.
-    local python_minor_version
-    if ! python_minor_version="$(echo "$standalone_version" 2>&1 | \
-            grep -Eo '^[0-9]+\.[0-9]+')"; then
-        error_out "Could not find Python minor version for fully" \
-            "specified version '$standalone_version'."
-    fi
-
-    check_minor_version "$python_minor_version"
-
     local cache_source_dir="${CACHE_DIR}/${standalone_version}"
     ensure_cache_dir "$cache_source_dir" "$standalone_version"
 
     echo -e "${CLR_BOLD}CPYTHON INTERPRETER COMPILATION & INSTALLATION${CLR_END}"
-    local standalone_interpreter_rel_dir="${STANDALONE_DIRNAME}/interpreter"
-    local standalone_interpreter_dir="${PWD}/${STANDALONE_DIRNAME}/interpreter"
-    compile_and_install_cpython "$cache_source_dir" "$python_minor_version" \
-        "$standalone_interpreter_rel_dir" "$standalone_interpreter_dir"
+    local interpreter_rel_dir="${STANDALONE_DIRNAME}/interpreter"
+    local interpreter_dir="${PWD}/${STANDALONE_DIRNAME}/interpreter"
+    compile_and_install_cpython "$cache_source_dir" "$interpreter_rel_dir" \
+        "$interpreter_dir"
 
-    local standalone_rel_bin="${standalone_interpreter_rel_dir}/bin/python${python_minor_version}"
+    local python_binary_name="python${cpython_major}.${cpython_minor}"
+    local standalone_rel_bin="${interpreter_rel_dir}/bin/${python_binary_name}"
     verify_interpreter "$standalone_version" "$standalone_rel_bin"
     echo
 
@@ -137,22 +194,10 @@ function main() {
     echo
 
     echo -e "${CLR_BOLD}SUMMARY${CLR_END}"
-    print_install_success "$STANDALONE_DIRNAME" "$standalone_interpreter_rel_dir" \
+    print_install_success "$STANDALONE_DIRNAME" "$interpreter_rel_dir" \
         "$venv_rel_dir"
 
     print_activation_instructions "$venv_rel_dir"
-}
-
-function check_cpython_version_valid() {
-    local standalone_version="$1"
-
-    # Check whether the version passed follows the X.Y.Z format (X.Y not accepted)
-    if ! echo "$standalone_version" | \
-            grep -E "^[0-9]+\.[0-9]+\.[0-9]+$" &> /dev/null; then
-        error_out "The Python versioned you passed '$standalone_version' is" \
-            "not valid. Please pass the full version name, such" \
-            "as '$DEFAULT_STANDALONE_VERSION'."
-    fi
 }
 
 function remove_standalone_dir() {
@@ -193,10 +238,10 @@ function remove_standalone_dir() {
 }
 
 function check_minor_version() {
-    local python_minor_version="$1"
+    local cpython_minor="$1"
 
     local python_major_number
-    python_major_number=$(echo "$python_minor_version" 2>&1 | \
+    python_major_number=$(echo "$cpython_minor" 2>&1 | \
         grep -Eo "^[0-9]+" | tr -d '\n')
     if [[ "$python_major_number" != "3" ]]; then
         error_out "Python major version '$python_major_number' that you requested is" \
@@ -204,7 +249,7 @@ function check_minor_version() {
     fi
 
     local python_minor_number
-    python_minor_number=$(echo "$python_minor_version" 2>&1 | \
+    python_minor_number=$(echo "$cpython_minor" 2>&1 | \
         grep -Eo "[0-9]+$" | tr -d '\n')
     if [[ "$python_minor_number" -lt "7" ]]; then
         error_out "Python version '$standalone_version' that you requested is too" \
@@ -229,9 +274,8 @@ function ensure_cache_dir() {
 
 function compile_and_install_cpython() {
     local cache_source_dir="$1"
-    local python_minor_version="$2"
-    local standalone_interpreter_rel_dir="$3"
-    local standalone_interpreter_dir="$4"
+    local interpreter_rel_dir="$2"
+    local interpreter_dir="$3"
 
     echo "➖ Looking for a previous build of CPython $standalone_version interpreter in"
     echo "the cache at '$cache_source_dir'..."
@@ -247,8 +291,8 @@ function compile_and_install_cpython() {
         compile_interpreter "$standalone_version" "$ready_file" "$cache_source_dir"
     fi
 
-    install_interpreter "$standalone_interpreter_rel_dir" \
-        "$standalone_interpreter_dir" "$cache_source_dir"
+    install_interpreter "$interpreter_rel_dir" \
+        "$interpreter_dir" "$cache_source_dir"
 }
 
 function verify_interpreter() {
@@ -394,14 +438,14 @@ function compile_interpreter() {
 }
 
 function install_interpreter() {
-    local standalone_interpreter_rel_dir="$1"
-    local standalone_interpreter_dir="$2"
+    local interpreter_rel_dir="$1"
+    local interpreter_dir="$2"
     local cache_source_dir="$3"
     
-    echo "➖ Installing Python interpreter to '$standalone_interpreter_rel_dir'..."
+    echo "➖ Installing Python interpreter to '$interpreter_rel_dir'..."
     local start_install_date="$SECONDS"
     local make_install_output
-    if ! make_install_output="$(export DESTDIR="$standalone_interpreter_dir" && \
+    if ! make_install_output="$(export DESTDIR="$interpreter_dir" && \
             make -C "$cache_source_dir" install 2>&1)"; then
         echo "[ERROR] Detailed logs for 'make install':"
         echo "$make_install_output"
@@ -465,7 +509,7 @@ function install_venv() {
 
 function print_install_success() {
     local standalone_dirname="$1"
-    local standalone_interpreter_rel_dir="$2"
+    local interpreter_rel_dir="$2"
     local venv_rel_dir="$3"
 
     local standalone_dir_size
@@ -474,7 +518,7 @@ function print_install_success() {
     fi
     echo "The Python standalone environment has been installed successfully in"
     echo "'$standalone_dirname'! (💽 $standalone_dir_size)"
-    echo "You can find the interpreter in '$standalone_interpreter_rel_dir'"
+    echo "You can find the interpreter in '$interpreter_rel_dir'"
     echo "and the venv in '$venv_rel_dir'."
     echo
 
@@ -501,14 +545,14 @@ function print_activation_instructions() {
     echo
 }
 
-arg_standalone_version="$DEFAULT_STANDALONE_VERSION"
+arg_standalone_version="$DEFAULT_CP_VERSION"
 force_removal=0
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --version)
             if [ -z "${2+x}" ]; then
                 error_out "Please pass a version number, such as" \
-                    "'$DEFAULT_STANDALONE_VERSION'. Run '$PROGNAME --help' for more" \
+                    "'$DEFAULT_CP_VERSION'. Run '$PROGNAME --help' for more" \
                     "details."
             fi
             arg_standalone_version="$2"
