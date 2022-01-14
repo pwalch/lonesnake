@@ -126,9 +126,7 @@ Once direnv is set up, install a standalone environment in your project and have
 
 ```bash
 # lonesnake auto-activation for the project directory
-export VIRTUAL_ENV_DISABLE_PROMPT=1  # direnv doesn't support updating the prompt
 export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
-export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 ```
 
 * `direnv allow`
@@ -147,9 +145,7 @@ If you intended to use your standalone environment as a global Python environmen
 
 ```bash
 # global lonesnake auto-activation
-export VIRTUAL_ENV_DISABLE_PROMPT=1  # no prompt prefix everywhere
 export PATH="${HOME}/.lonesnake/venv/bin:${PATH}"
-export VIRTUAL_ENV="${HOME}/.lonesnake/venv"
 ```
 
 * exit your shell and start a new one
