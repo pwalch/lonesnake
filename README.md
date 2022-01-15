@@ -137,6 +137,13 @@ export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
 
 > ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
+**pip-tools support**
+
+[pip-tools](https://github.com/jazzband/pip-tools)' sync command installs packages to the current venv. Therefore, all packages will be installed in the `.lonesnake` venv directory without any additional configuration:
+* `cd YOUR_PROJECT`
+* `pip install pip-tools`
+* `pip-sync PINNED_COMPILED_REQUIREMENTS`
+
 **Poetry support**
 
 [Poetry](https://github.com/python-poetry/poetry) can be integrated into the `.lonesnake` directory by specifying the `POETRY_VIRTUALENVS_PATH` environment variable:
