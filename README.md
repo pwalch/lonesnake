@@ -139,7 +139,7 @@ export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
 
 **Poetry support**
 
-To manage your project dependencies, you might be using [Poetry](https://github.com/python-poetry/poetry). Poetry can be integrated into the `lonesnake` directory as follows:
+[Poetry](https://github.com/python-poetry/poetry) can be integrated into the `.lonesnake` directory by specifying the `POETRY_VIRTUALENVS_PATH` environment variable:
 * `cd YOUR_PROJECT`
 * append the following to `.envrc`:
 
