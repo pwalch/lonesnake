@@ -135,6 +135,23 @@ export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
 
 > ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
+**Poetry support**
+
+To manage your project dependencies, you might be using [Poetry](https://github.com/python-poetry/poetry). Poetry can be integrated into the `lonesnake` directory as follows:
+* `cd YOUR_PROJECT`
+* append the following to `.envrc`:
+
+```bash
+export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
+```
+
+* `direnv allow`
+* `pip install poetry`
+* check with `poetry debug` that the "Virtualenv Path" of Poetry is located in a child directory of `.lonesnake/poetry_virtualenvs`
+  * if yes, Poetry is properly configured to use the `lonesnake` environment.
+
+> ℹ️ In case of trouble, you can get rid of the Poetry virtualenvs using `rm -rf .lonesnake/poetry_virtualenvs`.
+
 ### global environment auto-activation for a user
 
 If you intended to use your standalone environment as a global Python environment for your user, you want it to activate automatically when you start a new shell:
