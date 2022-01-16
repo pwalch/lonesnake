@@ -84,6 +84,8 @@ mkdir -p ~/.local/bin && \
 * `lonesnake --version 3.10.0`
   * creates an environment with CPython 3.10.0
 
+By default, `lonesnake` detects whether a `.lonesnake` directory already exists, and asks for confirmation interactively before deleting it. If you want to force deletion without confirmation, pass the `--force` option. This can be useful in non-interactive scripts.
+
 ## automated activation
 
 In most cases, you don't want to activate your Python environment with `source` every time you enter your project directory or use a Python command-line tool. Instead, you want it to auto-activate.
