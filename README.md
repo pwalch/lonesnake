@@ -137,17 +137,21 @@ export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
 
 > ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
-**pip-tools support**
+### project dependency management
+
+After setting up auto-activation with `direnv`, project dependency management tools can easily be integrated into the `.lonesnake` directory. This section shows how to do it for some commonly used tools.
+
+**pip-tools**
 
 [pip-tools](https://github.com/jazzband/pip-tools)' sync command installs packages to the current venv. Therefore, all packages will be installed in the `.lonesnake` venv directory without any additional configuration:
 * `cd YOUR_PROJECT`
 * `pip install pip-tools`
 * `pip-sync PINNED_COMPILED_REQUIREMENTS`
 
-**Poetry support**
+**Poetry**
 
 [Poetry](https://github.com/python-poetry/poetry) can be integrated into the `.lonesnake` directory by specifying the `POETRY_VIRTUALENVS_PATH` environment variable:
-* `cd YOUR_PROJECT`
+* `cd YOUR_PROJECT` (where your `pyproject.toml` is)
 * append the following to `.envrc`:
 
 ```bash
@@ -156,6 +160,7 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 
 * `direnv allow`
 * `pip install poetry`
+* `poetry install`
 * check with `poetry debug` that the "Virtualenv Path" of Poetry is located in a child directory of `.lonesnake/poetry_virtualenvs`
   * if yes, Poetry is properly configured to use the `lonesnake` environment.
 
