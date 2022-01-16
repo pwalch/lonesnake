@@ -78,11 +78,11 @@ mkdir -p ~/.local/bin && \
 **example commands**
 
 * `lonesnake`
-  * creates an environment with the most recent CPython version
+  * creates an environment with the latest CPython version
 * `lonesnake --version 3.10`
   * creates an environment with the latest patch of CPython 3.10
-* `lonesnake --version 3.9.9`
-  * creates an environment with CPython 3.9.9
+* `lonesnake --version 3.10.0`
+  * creates an environment with CPython 3.10.0
 
 ## automated activation
 
