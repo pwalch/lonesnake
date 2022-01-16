@@ -49,8 +49,9 @@ function usage() {
     echo -e "  ${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version $DEFAULT_CP_VERSION"
-    echo "       is installed. Versions before Python 3.7 are not supported."
-    echo "       That is, Python 2.7.X and 3.6.X are not supported."
+    echo "       is installed. Only versions from CPython 3.7+ are supported."
+    echo "       If you don't pass only a minor version number such as '3.10', the"
+    echo "       latest released patch will be used."
     echo "       You can find the list of all Python releases on this page:"
     echo "       https://www.python.org/downloads/"
     echo
