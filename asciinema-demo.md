@@ -10,7 +10,7 @@ Commands to run to record the demo:
 * `lonesnake`
 * `ls -al`
 * `ls -al .lonesnake`
-* `source source .lonesnake/venv/bin/activate`
+* `source .lonesnake/venv/bin/activate`
 * `python --version`
 * `pip list`
 * CTRL+D
