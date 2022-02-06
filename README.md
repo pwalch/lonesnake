@@ -200,7 +200,7 @@ After setting up a global standalone environment, it is recommended to install `
 # we keep everything related to the global environment in the same place.
 export PIPX_HOME="${HOME}/.lonesnake/pipx_home"
 export PIPX_BIN_DIR="${HOME}/.lonesnake/pipx_bin"
-export PATH="${PIPX_BIN_DIR}:$PATH"
+export PATH="${PIPX_BIN_DIR}:${PATH}"
 ```
 
 * exit your shell and start a new one
