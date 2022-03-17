@@ -517,7 +517,7 @@ function print_install_success() {
     if ! standalone_dir_size="$(du -sh "$standalone_dirname" | cut -f1)"; then
         error_out "Could not extract size of standalone directory '$standalone_dirname'."
     fi
-    echo "The Python standalone environment has been installed successfully in"
+    echo "✅🐍 The Python standalone environment has been installed successfully in"
     echo "'$standalone_dirname'! (💽 $standalone_dir_size)"
     echo "You can find the interpreter in '$interpreter_rel_dir'"
     echo "and the venv in '$venv_rel_dir'."
@@ -537,12 +537,17 @@ function print_activation_instructions() {
     local venv_rel_dir="$1"
 
     echo -e "${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}"
-    echo "You can activate your environment with the following command:"
+    echo "You can activate your environment manually for the current shell"
+    echo "with the following command:"
     echo -e "  ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}"
     echo
-    echo -e "💡 Please note that there are solutions in the documentation to" \
-        "${CLR_ITL}automatically${CLR_END}"
-    echo "activate the venv."
+    echo -e "ℹ️  Note that manual activations ${CLR_ITL}do not${CLR_END} persist when" \
+        "opening a new shell."
+    echo
+    echo -e "💡 To activate the environment ${CLR_ITL}automatically${CLR_END}," \
+        "follow these"
+    echo "   instructions:"
+    echo "      https://github.com/pwalch/lonesnake#automated-activation"
     echo
 }
 
