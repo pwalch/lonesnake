@@ -1,0 +1,42 @@
+name: test
+on: [push]
+env:
+  test_dir_name: test-workspace
+  cpython_version: "3.10"
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install CPython build dependencies
+        run: |
+          sudo apt-get install -y \
+            make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
+            libsqlite3-dev wget curl llvm libncursesw5-dev xz-utils tk-dev \
+            libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+      - name: Create test directory in which the .lonesnake directory will be created
+        run: mkdir ${{ github.workspace }}/${{ env.test_dir_name }}
+      - name: Install a CPython interpreter and a venv in the test directory
+        working-directory: "${{ github.workspace }}/${{ env.test_dir_name }}"
+        run:
+          ${{ github.workspace }}/lonesnake --version ${{ env.cpython_version }}
+      - name: Add the venv of the lonesnake environment to the PATH
+        run: |
+          echo '${{ github.workspace }}/${{ env.test_dir_name }}/.lonesnake/venv/bin' \
+          >> $GITHUB_PATH
+      - name: Check that the lonesnake interpreter is in use
+        run: |
+          which python | \
+          grep '${{ github.workspace }}/${{ env.test_dir_name }}/.lonesnake/venv/bin'
+      - name: Check that the environment uses CPython ${{ env.cpython_version }}
+        run: python --version | grep -E '^Python ${{ env.cpython_version }}'
+      - name: Check that the lonesnake Pip is in use
+        run: |
+          which pip | \
+          grep '${{ github.workspace }}/${{ env.test_dir_name }}/.lonesnake/venv/bin'
+      - name: List Pip packages after environment creation
+        run: pip list
+      - name: Check that we can install a Python package, the Black formatter
+        run: pip install black
+      - name: List Pip packages again after the Black installation
+        run: pip list
