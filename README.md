@@ -1,5 +1,7 @@
 # lonesnake
 
+![main workflow status](https://github.com/pwalch/lonesnake/actions/workflows/main.yml/badge.svg)
+
 `lonesnake` sets up a self-contained Python environment with an interpreter and a venv in single directory. It can be used to create fully isolated Python environments for projects, as well as setting up a global Python environment.
 
 It can be seen as a simpler variant of [pyenv](https://github.com/pyenv/pyenv) for people who do not need to develop against multiple versions of Python simultaneously for the same project.
