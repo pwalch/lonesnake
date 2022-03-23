@@ -6,7 +6,7 @@
 
 It can be seen as a simpler variant of [pyenv](https://github.com/pyenv/pyenv) for people who do not need to develop against multiple versions of Python simultaneously for the same project.
 
-[![asciicast](https://asciinema.org/a/JaCIWWQaQ3TnZLfRqUB55S2Dl.svg)](https://asciinema.org/a/JaCIWWQaQ3TnZLfRqUB55S2Dl)
+[![asciicast](https://asciinema.org/a/479944.svg)](https://asciinema.org/a/479944)
 
 What does this tool provide compared to other tools?
 * **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter as well as a venv. It is protected against breaking updates by your package manager or you blowing up your environment in one of your projects.
@@ -81,9 +81,9 @@ mkdir -p ~/.local/bin && \
 
 * `lonesnake`
   * creates an environment with the latest CPython version
-* `lonesnake --version 3.10`
+* `lonesnake --py 3.10`
   * creates an environment with the latest patch of CPython 3.10
-* `lonesnake --version 3.10.0`
+* `lonesnake --py 3.10.0`
   * creates an environment with CPython 3.10.0
 
 By default, `lonesnake` detects whether a `.lonesnake` directory already exists, and asks for confirmation interactively before deleting it. If you want to force deletion without confirmation, pass the `--force` option. This can be useful in non-interactive scripts.
@@ -127,7 +127,7 @@ Once direnv is set up, install a standalone environment in your project and have
 
 * start a new shell
 * `cd YOUR_PROJECT`
-* `lonesnake` (pass a `--version` if needed, see `--help`)
+* `lonesnake` (pass a `--py` if needed, see `--help`)
 * `touch .envrc` and fill it with this:
 
 ```bash

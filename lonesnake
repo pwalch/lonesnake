@@ -6,8 +6,10 @@
 
 set -euo pipefail
 
-PROGNAME="$(basename "$0")"
-readonly PROGNAME
+readonly PROG_VERSION="0.7.1"
+
+PROG_NAME="$(basename "$0")"
+readonly PROG_NAME
 
 # New directory that will be created in the current working directory
 # to host the Python interpreter and the venv.
@@ -35,8 +37,8 @@ readonly CLR_ITL="\033[3m"  # italic
 readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
-    echo -e "Usage: ${CLR_BOLD}${PROGNAME}${CLR_END}" \
-        "[${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
+    echo -e "Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END}" \
+        "[${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
         "[${CLR_BOLD}--force${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
@@ -46,7 +48,7 @@ function usage() {
     echo "The source and build files are cached in '$CACHE_DIR'."
     echo
     echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
-    echo -e "  ${CLR_BOLD}--version${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
+    echo -e "  ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
     echo "       pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version $DEFAULT_CP_VERSION"
     echo "       is installed. Only versions from CPython 3.7+ are supported."
@@ -555,10 +557,10 @@ arg_standalone_version="$DEFAULT_CP_VERSION"
 force_removal=0
 while [[ "$#" -gt 0 ]]; do
     case $1 in
-        --version)
+        --py)
             if [ -z "${2+x}" ]; then
                 error_out "Please pass a version number, such as" \
-                    "'$DEFAULT_CP_VERSION'. Run '$PROGNAME --help' for more" \
+                    "'$DEFAULT_CP_VERSION'. Run '$PROG_NAME --help' for more" \
                     "details."
             fi
             arg_standalone_version="$2"
@@ -571,6 +573,11 @@ while [[ "$#" -gt 0 ]]; do
 
         --help|-h)
             usage
+            exit 1
+        ;;
+
+        --version|-v)
+            echo "${PROG_NAME} ${PROG_VERSION}"
             exit 1
         ;;
 
