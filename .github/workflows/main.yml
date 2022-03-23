@@ -19,7 +19,7 @@ jobs:
       - name: Install a CPython interpreter and a venv in the test directory
         working-directory: "${{ github.workspace }}/${{ env.test_dir_name }}"
         run:
-          ${{ github.workspace }}/lonesnake --version ${{ env.cpython_version }}
+          ${{ github.workspace }}/lonesnake --py ${{ env.cpython_version }}
       - name: Add the venv of the lonesnake environment to the PATH
         run: |
           echo '${{ github.workspace }}/${{ env.test_dir_name }}/.lonesnake/venv/bin' \
