@@ -37,9 +37,12 @@ readonly CLR_ITL="\033[3m"  # italic
 readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
+    echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}"
+    echo
     echo -e "Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END}" \
         "[${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
-        "[${CLR_BOLD}--force${CLR_END}]"
+        "[${CLR_BOLD}--force${CLR_END}]" \
+        "[${CLR_BOLD}--version${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
     echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
@@ -49,7 +52,7 @@ function usage() {
     echo
     echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
     echo -e "  ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
-    echo "       pass a version number to install the CPython interpreter"
+    echo "       Pass a version number to install the CPython interpreter"
     echo "       version of your choice. By default, the version $DEFAULT_CP_VERSION"
     echo "       is installed. Only versions from CPython 3.7+ are supported."
     echo "       If you don't pass only a minor version number such as '3.10', the"
@@ -62,6 +65,12 @@ function usage() {
     echo "      '$STANDALONE_DIRNAME' directory should be deleted. If '--force' is"
     echo "      passed, no question is asked and we always proceed with deletion. Use"
     echo "      this flag in your non-interactive scripts."
+    echo
+    echo -e "  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}"
+    echo "      Print version number of $PROG_NAME."
+    echo
+    echo -e "  ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}"
+    echo "      Print this help message."
     echo
     print_python_deps
     echo
