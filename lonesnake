@@ -21,8 +21,8 @@ readonly CACHE_DIR="$HOME/.cache/lonesnake"
 # Latest patch version number for each supported Python minor version
 readonly LATEST_PATCH_CP37="13"
 readonly LATEST_PATCH_CP38="13"
-readonly LATEST_PATCH_CP39="11"
-readonly LATEST_PATCH_CP310="3"
+readonly LATEST_PATCH_CP39="12"
+readonly LATEST_PATCH_CP310="4"
 
 # Default CPython version if the user does not request a specific version
 readonly DEFAULT_CP_MINOR="3.10"
