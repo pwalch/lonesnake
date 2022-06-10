@@ -9,7 +9,7 @@ It can be seen as a simpler variant of [pyenv](https://github.com/pyenv/pyenv) f
 [![asciicast](https://asciinema.org/a/479944.svg)](https://asciinema.org/a/479944)
 
 What does this tool provide compared to other tools?
-* **fully self-contained Python environment**. The environment is contained in a single directory, and includes a fully isolated Python interpreter as well as a venv. It is protected against breaking updates by your package manager or you blowing up your environment in one of your projects.
+* **fully self-contained Python environment**. The environment is contained in a single `.lonesnake` directory, and includes a fully isolated Python interpreter as well as a venv. It is protected against breaking updates by your package manager or you blowing up your environment in one of your projects.
 * **transparent configuration and structure**. No sourcing of slow tool-specific initialization scripts. Auto-activation of venv is enabled with explicit exports.
 * **easy venv setup**. No need to learn many new commands to set up a Python virtual environment. Just install `lonesnake` and run it, and you've got your environment. No previous Python interpreter is needed.
 
@@ -80,7 +80,7 @@ mkdir -p ~/.local/bin && \
 **example commands**
 
 * `lonesnake`
-  * creates an environment with the latest CPython version
+  * creates an environment with the latest CPython version, in the `.lonesnake` directory within the current working directory
 * `lonesnake --py 3.10`
   * creates an environment with the latest patch of CPython 3.10
 * `lonesnake --py 3.10.0`
