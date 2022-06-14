@@ -141,6 +141,23 @@ export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
 
 > ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
+<details>
+<summary>If you wish to show a prefix in your shell prompt indicating whether a lonesnake venv is active (e.g. <code>🐍venv-3.10.4</code>), some code needs to be added to your <code>~/.bashrc</code> or <code>~/.zshrc</code> to check for activation. Click here to show an example code, but be aware it might need adjustments depending on the complexity of your prompt config.</summary>
+
+```bash
+show_lonesnake_venv_prefix () {
+  local cpython_path="$PWD/.lonesnake/venv/bin/python"
+  # If the venv is activated, print the prompt prefix
+  if [[ -x "$cpython_path" ]] && \
+      [[ "$(which python)" == "$cpython_path" ]]; then
+    local cpython_version="$(python --version | grep -Eo '[0-9]+\.[0-9]+\.[0-9]+')"
+    echo "🐍venv-${cpython_version} "
+  fi
+}
+PS1='$(show_lonesnake_venv_prefix)'"$PS1"
+```
+</details>
+
 ### project dependency management
 
 After setting up auto-activation with `direnv`, project dependency management tools can easily be integrated into the `.lonesnake` directory. This section shows how to do it for some commonly used tools.
