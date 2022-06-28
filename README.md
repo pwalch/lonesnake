@@ -133,6 +133,7 @@ Once direnv is set up, install a standalone environment in your project and have
 ```bash
 # lonesnake auto-activation for the project directory
 export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
+export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 ```
 
 * `direnv allow`
