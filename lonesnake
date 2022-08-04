@@ -449,7 +449,7 @@ function install_interpreter() {
     echo "➖ Installing Python interpreter to '$interpreter_rel_dir'..."
     local start_install_date="$SECONDS"
     local make_install_output
-    if ! make_install_output="$(export DESTDIR="$interpreter_dir" && \
+    if ! make_install_output="$(DESTDIR="$interpreter_dir" \
             make -C "$cache_source_dir" install 2>&1)"; then
         echo "[ERROR] Detailed logs for 'make install':"
         echo "$make_install_output"
