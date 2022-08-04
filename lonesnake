@@ -37,43 +37,47 @@ readonly CLR_ITL="\033[3m"  # italic
 readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
-    echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}"
-    echo
-    echo -e "Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END}" \
-        "[${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
-        "[${CLR_BOLD}--version${CLR_END}]"
-    echo
-    echo "Creates a standalone Python environment in a new directory named "
-    echo "'$STANDALONE_DIRNAME' inside your working directory. This environment includes"
-    echo "a CPython interpreter built from source and a venv created with that"
-    echo "interpreter."
-    echo "The source and build files are cached in '$CACHE_DIR'."
-    echo
-    echo -e "${CLR_BOLD}OPTIONS${CLR_END}"
-    echo -e "  ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}"
-    echo "       Pass a version number to install the CPython interpreter"
-    echo "       version of your choice. By default, the version $DEFAULT_CP_VERSION"
-    echo "       is installed. Only versions from CPython 3.7+ are supported."
-    echo "       If you don't pass only a minor version number such as '3.10', the"
-    echo "       latest released patch will be used."
-    echo "       You can find the list of all Python releases on this page:"
-    echo "       https://www.python.org/downloads/"
-    echo
-    echo -e "  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}"
-    echo "      Print version number of $PROG_NAME."
-    echo
-    echo -e "  ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}"
-    echo "      Print this help message."
+echo -e "$(
+cat << EOM
+${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
+  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
+
+  Creates a standalone Python environment in a new directory named
+  '$STANDALONE_DIRNAME' inside your working directory. This environment includes
+  a CPython interpreter built from source and a venv created with that
+  interpreter.
+  The source and build files are cached in '$CACHE_DIR'.
+
+${CLR_BOLD}OPTIONS${CLR_END}
+  ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}
+       Pass a version number to install the CPython interpreter
+       version of your choice. By default, the version $DEFAULT_CP_VERSION
+       is installed. Only versions from CPython 3.7+ are supported.
+       If you don't pass only a minor version number such as '3.10', the
+       latest released patch will be used.
+       You can find the list of all Python releases on this page:
+       https://www.python.org/downloads/
+
+  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}
+      Print version number of $PROG_NAME.
+
+  ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}
+      Print this help message.
+EOM
+)"
     echo
     print_python_deps
-    echo
 }
 
 function print_python_deps() {
-    echo -e "${CLR_BOLD}DEPENDENCIES${CLR_END}"
-    echo "  📝 Make sure you have installed all the dependencies that are necessary"
-    echo "     to compile the CPython interpreter. Check out the docs for more details"
-    echo "     about how to do it for your OS."
+echo -e "$(
+cat << EOM
+${CLR_BOLD}DEPENDENCIES${CLR_END}
+  📝 Make sure you have installed all the dependencies that are necessary
+     to compile the CPython interpreter. Check out the docs for more details
+     about how to do it for your OS.
+EOM
+)"
 }
 
 function error_out() {
@@ -535,19 +539,21 @@ function print_install_success() {
 function print_activation_instructions() {
     local venv_rel_dir="$1"
 
-    echo -e "${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}"
-    echo "You can activate your environment manually for the current shell"
-    echo "with the following command:"
-    echo -e "  ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}"
-    echo
-    echo -e "ℹ️  Note that manual activations ${CLR_ITL}do not${CLR_END} persist when" \
-        "opening a new shell."
-    echo
-    echo -e "💡 To activate the environment ${CLR_ITL}automatically${CLR_END}," \
-        "follow these"
-    echo "   instructions:"
-    echo "      https://github.com/pwalch/lonesnake#automated-activation"
-    echo
+echo -e "$(
+cat << EOM
+${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}
+You can activate your environment manually for the current shell
+with the following command:
+  ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}
+
+ℹ️  Note that manual activations ${CLR_ITL}do not${CLR_END} persist when opening
+   a new shell.
+
+💡 To activate the environment ${CLR_ITL}automatically${CLR_END}, follow these
+   instructions:
+      https://github.com/pwalch/lonesnake#automated-activation
+EOM
+)"
 }
 
 arg_standalone_version="$DEFAULT_CP_VERSION"
