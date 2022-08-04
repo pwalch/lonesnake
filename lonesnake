@@ -41,7 +41,6 @@ function usage() {
     echo
     echo -e "Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END}" \
         "[${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]" \
-        "[${CLR_BOLD}--force${CLR_END}]" \
         "[${CLR_BOLD}--version${CLR_END}]"
     echo
     echo "Creates a standalone Python environment in a new directory named "
@@ -59,12 +58,6 @@ function usage() {
     echo "       latest released patch will be used."
     echo "       You can find the list of all Python releases on this page:"
     echo "       https://www.python.org/downloads/"
-    echo
-    echo -e "  ${CLR_BOLD}--force${CLR_END}"
-    echo "      By default, the user is asked to confirm via stdin whether an existing"
-    echo "      '$STANDALONE_DIRNAME' directory should be deleted. If '--force' is"
-    echo "      passed, no question is asked and we always proceed with deletion. Use"
-    echo "      this flag in your non-interactive scripts."
     echo
     echo -e "  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}"
     echo "      Print version number of $PROG_NAME."
@@ -111,7 +104,6 @@ function check_prerequisites() {
 
 function main() {
     local user_standalone_version="$1"
-    local force_removal="$2"
 
     check_prerequisites
 
@@ -183,7 +175,7 @@ function create_standalone_dir() {
     echo -e "as well as a venv based on this interpreter."
     echo
 
-    remove_standalone_dir "$STANDALONE_DIRNAME" "$force_removal"
+    remove_standalone_dir "$STANDALONE_DIRNAME"
 
     local cache_source_dir="${CACHE_DIR}/${standalone_version}"
     ensure_cache_dir "$cache_source_dir" "$standalone_version"
@@ -214,7 +206,6 @@ function create_standalone_dir() {
 
 function remove_standalone_dir() {
     local standalone_dir_path="$1"
-    local force_removal="$2"
 
     # If standalone directory does not exist, we don't need to delete it
     if [[ ! -d "$standalone_dir_path" ]]; then
@@ -222,23 +213,20 @@ function remove_standalone_dir() {
     fi
 
     local answer="y"
-    # When removal of directory is not forced, we ask the user
-    if [[ "$force_removal" -eq 0 ]]; then
-        echo "❓ An environment already exists at '$standalone_dir_path'."
-        read -rp "   Do you want to remove it? (y/n) " answer
-        case "$answer" in
-            y|Y|yes|YES)
-                # If yes, we are continuing, in other cases we abort.
-            ;;
-            n|N|no|NO)
-                error_out "Cannot continue without removing existing environment." \
-                    "Aborting."
-            ;;
-            *)
-                error_out "Please re-try and answer 'y' or 'n'."
-            ;;
-        esac
-    fi
+    echo "❓ An environment already exists at '$standalone_dir_path'."
+    read -rp "   Do you want to remove it? (y/n) " answer
+    case "$answer" in
+        y|Y|yes|YES)
+            # If yes, we are continuing, in other cases we abort.
+        ;;
+        n|N|no|NO)
+            error_out "Cannot continue without removing existing environment." \
+                "Aborting."
+        ;;
+        *)
+            error_out "Please re-try and answer 'y' or 'n'."
+        ;;
+    esac
 
     echo "🗑️  Deleting old '$standalone_dir_path' directory now so we can start with"
     echo "   a clean state."
@@ -356,7 +344,7 @@ function compile_interpreter() {
         error_out "Could not reach 'python.org', do you have Internet access?"
     fi
 
-    # Check whether requested Python interpreter version exists on 'python.org' 
+    # Check whether requested Python interpreter version exists on 'python.org'
     local ftp_base_url="${python_org_url}/ftp/python"
     local ftp_version_path="${standalone_version}/Python-${standalone_version}.tgz"
     local python_source_url="${ftp_base_url}/${ftp_version_path}"
@@ -453,7 +441,7 @@ function install_interpreter() {
     local interpreter_rel_dir="$1"
     local interpreter_dir="$2"
     local cache_source_dir="$3"
-    
+
     echo "➖ Installing Python interpreter to '$interpreter_rel_dir'..."
     local start_install_date="$SECONDS"
     local make_install_output
@@ -563,7 +551,6 @@ function print_activation_instructions() {
 }
 
 arg_standalone_version="$DEFAULT_CP_VERSION"
-force_removal=0
 while [[ "$#" -gt 0 ]]; do
     case $1 in
         --py)
@@ -574,10 +561,6 @@ while [[ "$#" -gt 0 ]]; do
             fi
             arg_standalone_version="$2"
             shift
-        ;;
-
-        --force)
-            force_removal=1
         ;;
 
         --help|-h)
@@ -597,4 +580,4 @@ while [[ "$#" -gt 0 ]]; do
     shift
 done
 
-main "$arg_standalone_version" "$force_removal"
+main "$arg_standalone_version"

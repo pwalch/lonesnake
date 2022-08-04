@@ -86,7 +86,7 @@ mkdir -p ~/.local/bin && \
 * `lonesnake --py 3.10.0`
   * creates an environment with CPython 3.10.0
 
-By default, `lonesnake` detects whether a `.lonesnake` directory already exists, and asks for confirmation interactively before deleting it. If you want to force deletion without confirmation, pass the `--force` option. This can be useful in non-interactive scripts.
+If a `.lonesnake` directory already exists, `lonesnake` will detect it and ask for confirmation interactively before deleting it.
 
 ## automated activation
 
@@ -118,7 +118,7 @@ sudo pacman -S direnv
 <details>
 <summary>register the direnv hook in your shell</summary>
 
-* Bash: in your `~/.bashrc`, append `eval "$(direnv hook bash)"` 
+* Bash: in your `~/.bashrc`, append `eval "$(direnv hook bash)"`
 * ZSH: in your `~/.zshrc`, append `eval "$(direnv hook zsh)"`
 
 </details>
