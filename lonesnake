@@ -184,7 +184,7 @@ function create_standalone_dir() {
     local cache_source_dir="${CACHE_DIR}/${standalone_version}"
     ensure_cache_dir "$cache_source_dir" "$standalone_version"
 
-    echo -e "${CLR_BOLD}CPYTHON INTERPRETER COMPILATION & INSTALLATION${CLR_END}"
+    echo -e "${CLR_BOLD}CPYTHON INTERPRETER COMPILATION & INSTALLATION${CLR_END}"
     local interpreter_rel_dir="${STANDALONE_DIRNAME}/interpreter"
     local interpreter_dir="${PWD}/${STANDALONE_DIRNAME}/interpreter"
     compile_and_install_cpython "$cache_source_dir" "$interpreter_rel_dir" \
@@ -195,7 +195,7 @@ function create_standalone_dir() {
     verify_interpreter "$standalone_version" "$standalone_rel_bin"
     echo
 
-    echo -e "${CLR_BOLD}VENV INSTALLATION${CLR_END}"
+    echo -e "${CLR_BOLD}VENV INSTALLATION${CLR_END}"
     local venv_rel_dir="${STANDALONE_DIRNAME}/venv"
     install_venv "$venv_rel_dir" "$standalone_rel_bin"
 
