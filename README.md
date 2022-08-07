@@ -143,6 +143,23 @@ export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 > ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
 
 <details>
+<summary>If you often find yourself copying and pasting the project venv exports to your <code>.envrc</code>, click here to see a function to do it automatically. You can paste this function in your <code>~/.bashrc</code> or <code>~/.zshrc</code></summary>
+
+```bash
+# Usage: lonesnake-print-activation >> .envrc
+function lonesnake-print-activation() {
+  # Print activation exports for lonesnake
+cat << EOM
+# lonesnake auto-activation for the project directory
+export PATH="\${PWD}/.lonesnake/venv/bin:\${PATH}"
+export VIRTUAL_ENV="\${PWD}/.lonesnake/venv"
+EOM
+}
+```
+</details>
+
+
+<details>
 <summary>If you wish to show a prefix in your shell prompt indicating whether a lonesnake venv is active (e.g. <code>🐍venv-3.10.4</code>), some code needs to be added to your <code>~/.bashrc</code> or <code>~/.zshrc</code> to check for activation. Click here to show an example code, but be aware it might need adjustments depending on the complexity of your prompt config.</summary>
 
 ```bash
