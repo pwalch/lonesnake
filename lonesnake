@@ -53,8 +53,8 @@ ${CLR_BOLD}OPTIONS${CLR_END}
        Pass a version number to install the CPython interpreter
        version of your choice. By default, the version $DEFAULT_CP_VERSION
        is installed. Only versions from CPython 3.7+ are supported.
-       If you don't pass only a minor version number such as '3.10', the
-       latest released patch will be used.
+       If you pass only a minor version number such as '3.10', the
+       latest released patch of this minor version will be used.
        You can find the list of all Python releases on this page:
        https://www.python.org/downloads/
 
