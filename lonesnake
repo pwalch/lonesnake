@@ -526,7 +526,7 @@ function print_install_success() {
     echo "and the venv in '$venv_rel_dir'."
     echo
 
-    if [[ -d "./.git" ]]; then
+    if [[ -f ".gitignore" ]]; then
         if ! grep "/${STANDALONE_DIRNAME}/" < ".gitignore" &> /dev/null; then
             echo -e "⚠️  Don't forget to add a line for it in your" \
                 "${CLR_BOLD}.gitignore${CLR_END}:"
