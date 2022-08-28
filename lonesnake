@@ -37,9 +37,7 @@ readonly CLR_ITL="\033[3m"  # italic
 readonly CLR_END="\033[0m"  # end-marker
 
 function usage() {
-echo -e "$(
-cat << EOM
-${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
+echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
   Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
 
   Creates a standalone Python environment in a new directory named
@@ -63,21 +61,15 @@ ${CLR_BOLD}OPTIONS${CLR_END}
 
   ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}
       Print this help message.
-EOM
-)"
-    echo
+"
     print_python_deps
 }
 
 function print_python_deps() {
-echo -e "$(
-cat << EOM
-${CLR_BOLD}DEPENDENCIES${CLR_END}
+echo -e "${CLR_BOLD}DEPENDENCIES${CLR_END}
   📝 Make sure you have installed all the dependencies that are necessary
      to compile the CPython interpreter. Check out the docs for more details
-     about how to do it for your OS.
-EOM
-)"
+     about how to do it for your OS."
 }
 
 function error_out() {
@@ -539,9 +531,7 @@ function print_install_success() {
 function print_activation_instructions() {
     local venv_rel_dir="$1"
 
-echo -e "$(
-cat << EOM
-${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}
+echo -e "${CLR_BOLD}ACTIVATION INSTRUCTIONS${CLR_END}
 You can activate your environment manually for the current shell
 with the following command:
   ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}
@@ -551,9 +541,7 @@ with the following command:
 
 💡 To activate the environment ${CLR_ITL}automatically${CLR_END}, follow these
    instructions:
-      https://github.com/pwalch/lonesnake#automated-activation
-EOM
-)"
+      https://github.com/pwalch/lonesnake#automated-activation"
 }
 
 arg_standalone_version="$DEFAULT_CP_VERSION"
