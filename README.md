@@ -94,7 +94,8 @@ In most cases, you don't want to activate your Python environment with `source` 
 
 ### local environment auto-activation with direnv
 
-If you want to activate the environment automatically when you enter a project directory, you can use [direnv](https://direnv.net/docs/installation.html):
+If you want to activate the environment automatically when you enter a project directory, you can use [
+](https://direnv.net/docs/installation.html):
 
 <details>
 <summary>install <code>direnv</code> with your package manager</summary>
@@ -132,7 +133,7 @@ Once direnv is set up, install a standalone environment in your project and have
 
 ```bash
 # lonesnake auto-activation for the project directory
-export PATH="${PWD}/.lonesnake/venv/bin:${PATH}"
+PATH_add "${PWD}/.lonesnake/venv/bin"
 export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 ```
 
@@ -151,7 +152,7 @@ function lonesnake-print-activation() {
   # Print activation exports for lonesnake
 cat << EOM
 # lonesnake auto-activation for the project directory
-export PATH="\${PWD}/.lonesnake/venv/bin:\${PATH}"
+PATH_add "\${PWD}/.lonesnake/venv/bin"
 export VIRTUAL_ENV="\${PWD}/.lonesnake/venv"
 EOM
 }
