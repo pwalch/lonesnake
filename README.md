@@ -135,6 +135,10 @@ Once direnv is set up, install a standalone environment in your project and have
 # lonesnake auto-activation for the project directory
 PATH_add "${PWD}/.lonesnake/venv/bin"
 export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
+
+# Solve errors involving "Python.h not found" when building
+# Python extensions with a lonesnake environment.
+path_add CPATH "${PWD}/${interpreter_dir_rel}/include/${include_dir_name}"
 ```
 
 * `direnv allow`
@@ -147,13 +151,26 @@ export VIRTUAL_ENV="${PWD}/.lonesnake/venv"
 <summary>If you often find yourself copying and pasting the project venv exports to your <code>.envrc</code>, click here to see a function to do it automatically. You can paste this function in your <code>~/.bashrc</code> or <code>~/.zshrc</code></summary>
 
 ```bash
+# Print activation exports for lonesnake
 # Usage: lonesnake-print-activation >> .envrc
 function lonesnake-print-activation() {
-  # Print activation exports for lonesnake
+  local interpreter_dir_rel=".lonesnake/interpreter"
+  if [[ ! -d "$interpreter_dir_rel" ]]; then
+    echo "[ERROR] Could not find interpreter directory at" \
+        "'${interpreter_dir_rel}'. Is there a lonesnake environment?" >&2
+    return 1
+  fi
+  local include_dir=$(find "${interpreter_dir_rel}/include" -name "python*" -type d)
+  local include_dir_name=$(basename "${include_dir}")
+
 cat << EOM
 # lonesnake auto-activation for the project directory
 PATH_add "\${PWD}/.lonesnake/venv/bin"
 export VIRTUAL_ENV="\${PWD}/.lonesnake/venv"
+
+# Solve errors involving "Python.h not found" when building
+# Python extensions with a lonesnake environment.
+path_add CPATH "\${PWD}/${interpreter_dir_rel}/include/${include_dir_name}"
 EOM
 }
 ```
