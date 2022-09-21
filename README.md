@@ -208,6 +208,18 @@ In this section, you will find some pointers to help your IDE find your project'
   - note that after the word `setting`, you should see `./.lonesnake/venv/bin/python`
 - when you open the integrated terminal, VS Code should now be sourcing `.lonesnake/venv/bin/activate`
 
+**PyCharm**
+
+- open a project directory that contains a lonesnake environment at its root
+- click `File > Settings > Project: YOUR_PROJECT > Python Interpreter`
+- click `Add Interpreter > Add Local Interpreter...`
+- in `Virtualenv Environment`
+  - set `Environment` to `Existing`
+  - as `Interpreter`, pick `.lonesnake/venv/bin/python` from your project
+  - click `OK`
+- click `OK`, then wait for the environment to be indexed
+- when you create a new `Run/Debug` configuration, the `Python interpreter` field should point to the lonesnake environment
+
 ### project dependency management
 
 After setting up auto-activation with `direnv`, project dependency management tools can easily be integrated into the `.lonesnake` directory. This section shows how to do it for some commonly used tools.
