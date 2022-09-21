@@ -194,6 +194,20 @@ PS1='$(show_lonesnake_venv_prefix)'"$PS1"
 ```
 </details>
 
+### IDE support
+
+In this section, you will find some pointers to help your IDE find your project's lonesnake environment.
+
+**VSCode**
+
+- open a project directory that contains a lonesnake environment at its root
+- click `File > Preferences > Settings` and then go to `Workspace` and search for `python.defaultInterpreterPath`
+- set this path to `${workspaceFolder}/.lonesnake/venv/bin/python`
+- press `CMD/CTRL + SHIFT + P` or click `View > Command Palette`, then choose `Python: Select Interpreter`
+- choose ``Use Python from `python.defaultInterpreterPath` setting``
+  - note that after the word `setting`, you should see `./.lonesnake/venv/bin/python`
+- when you open the integrated terminal, VS Code should now be sourcing `.lonesnake/venv/bin/activate`
+
 ### project dependency management
 
 After setting up auto-activation with `direnv`, project dependency management tools can easily be integrated into the `.lonesnake` directory. This section shows how to do it for some commonly used tools.
