@@ -136,8 +136,8 @@ function check_cpython_major_minor_version() {
     local minor_number="$2"
 
     if [[ "$major_number" != "3" ]] || [[ "$minor_number" -lt "7" ]]; then
-        error_out "Python version '$major_number' that you requested is" \
-            "not supported. Please use Python 3.7+."
+        error_out "Python version '${major_number}.${minor_number}' that you" \
+            "requested is not supported. Please use Python 3.7+."
     fi
 }
 
@@ -239,26 +239,6 @@ function remove_standalone_dir() {
     fi
     echo "  ✅ deleted old environment directory"
     echo
-}
-
-function check_minor_version() {
-    local cpython_minor="$1"
-
-    local python_major_number
-    python_major_number=$(echo "$cpython_minor" 2>&1 | \
-        grep -Eo "^[0-9]+" | tr -d '\n')
-    if [[ "$python_major_number" != "3" ]]; then
-        error_out "Python major version '$python_major_number' that you requested is" \
-            "not supported. Please use Python 3.7+."
-    fi
-
-    local python_minor_number
-    python_minor_number=$(echo "$cpython_minor" 2>&1 | \
-        grep -Eo "[0-9]+$" | tr -d '\n')
-    if [[ "$python_minor_number" -lt "7" ]]; then
-        error_out "Python version '$standalone_version' that you requested is too" \
-            "old and not supported. Please use Python 3.7+."
-    fi
 }
 
 function ensure_cache_dir() {
