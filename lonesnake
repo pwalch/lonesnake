@@ -163,8 +163,7 @@ function guess_cpython_patch_number() {
         ;;
     esac
 
-    error_out "Could not find a patch version number for the minor version" \
-        "'$cpython_patch' that you provided."
+    error_out "Could not find the Python minor version '$minor' that you requested."
 }
 
 function create_standalone_dir() {
