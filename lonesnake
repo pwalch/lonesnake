@@ -144,18 +144,27 @@ function check_cpython_major_minor_version() {
 function guess_cpython_patch_number() {
     local minor="$1"
 
-    if [[ "$minor" == 7 ]]; then
-        echo "$LATEST_PATCH_CP37"
-    elif [[ "$minor" == 8 ]]; then
-        echo "$LATEST_PATCH_CP38"
-    elif [[ "$minor" == 9 ]]; then
-        echo "$LATEST_PATCH_CP39"
-    elif [[ "$minor" == 10 ]]; then
-        echo "$LATEST_PATCH_CP310"
-    else
-        error_out "Could not find a patch version number for the minor version" \
-            "'$cpython_patch' that you provided."
-    fi
+    case "$minor" in
+        7)
+           echo "$LATEST_PATCH_CP37"
+           return
+        ;;
+        8)
+           echo "$LATEST_PATCH_CP38"
+           return
+        ;;
+        9)
+           echo "$LATEST_PATCH_CP39"
+           return
+        ;;
+        10)
+           echo "$LATEST_PATCH_CP310"
+           return
+        ;;
+    esac
+
+    error_out "Could not find a patch version number for the minor version" \
+        "'$cpython_patch' that you provided."
 }
 
 function create_standalone_dir() {
