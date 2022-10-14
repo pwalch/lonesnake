@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROG_VERSION="0.15.0"
+readonly PROG_VERSION="0.16.0"
 
 PROG_NAME="$(basename "$0")"
 readonly PROG_NAME
@@ -23,10 +23,11 @@ readonly LATEST_PATCH_CP37="15"
 readonly LATEST_PATCH_CP38="15"
 readonly LATEST_PATCH_CP39="15"
 readonly LATEST_PATCH_CP310="8"
+readonly LATEST_PATCH_CP311="0"
 
 # Default CPython version if the user does not request a specific version
-readonly DEFAULT_CP_MINOR="3.10"
-readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP310}"
+readonly DEFAULT_CP_MINOR="3.11"
+readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP311}"
 
 # Color markers
 readonly CLR_BOLD="\033[1m"  # bold
@@ -161,6 +162,10 @@ function guess_cpython_patch_number() {
            echo "$LATEST_PATCH_CP310"
            return
         ;;
+        11)
+           echo "$LATEST_PATCH_CP311"
+           return
+        ;;
     esac
 
     error_out "Could not find the Python minor version '$minor' that you requested."
@@ -191,7 +196,7 @@ function create_standalone_dir() {
         "$interpreter_dir"
 
     local python_binary_name="python${cpython_major}.${cpython_minor}"
-    local standalone_rel_bin="${interpreter_rel_dir}/bin/${python_binary_name}"
+    local standalone_rel_bin="${interpreter_rel_dir}/usr/local/bin/${python_binary_name}"
     verify_interpreter "$standalone_version" "$standalone_rel_bin"
     echo
 
@@ -357,11 +362,9 @@ function compile_interpreter() {
     echo "➖ Running './configure' in Python interpreter source code directory" \
         "'$cache_source_dir'..."
     local start_configure_date="$SECONDS"
-    # We pass '--prefix ""' so all paths are relative to 'DESTDIR' at the 'make install'
-    # step later. If we don't set it, it is in /usr/local by default.
     local configure_output
     if ! configure_output="$(pushd "$cache_source_dir" && \
-            ./configure --prefix="" "$with_openssl_str" 2>&1 &&
+            ./configure "$with_openssl_str" 2>&1 &&
             popd)"; then
         echo "[ERROR] Detailed logs for '.configure':"
         echo "$configure_output"
