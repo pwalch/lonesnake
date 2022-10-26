@@ -2,7 +2,7 @@ name: test
 on: [push]
 env:
   test_dir_name: test-workspace
-  cpython_version: "3.10"
+  cpython_version: "3.11"
 jobs:
   build-and-test:
     runs-on: ubuntu-latest

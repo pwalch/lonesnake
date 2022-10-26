@@ -66,7 +66,7 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.15.0/lonesnake && \
+  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.16.0/lonesnake && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
@@ -81,10 +81,10 @@ mkdir -p ~/.local/bin && \
 
 * `lonesnake`
   * creates an environment with the latest CPython version, in the `.lonesnake` directory within the current working directory
-* `lonesnake --py 3.10`
-  * creates an environment with the latest patch of CPython 3.10
-* `lonesnake --py 3.10.0`
-  * creates an environment with CPython 3.10.0
+* `lonesnake --py 3.11`
+  * creates an environment with the latest patch of CPython 3.11
+* `lonesnake --py 3.11.0`
+  * creates an environment with CPython 3.11.0
 
 If a `.lonesnake` directory already exists, `lonesnake` will detect it and ask for confirmation interactively before deleting it.
 
@@ -139,7 +139,7 @@ export VIRTUAL_ENV="${lonesnake_dir}/venv"
 
 # Solve errors involving "Python.h not found" when building
 # Python extensions with a lonesnake environment.
-parent_include_dir="${lonesnake_dir}/interpreter/include"
+parent_include_dir="${lonesnake_dir}/interpreter/usr/local/include"
 if [[ -d "$parent_include_dir" ]]; then
   include_dir_name=$(find "$parent_include_dir" \
     -mindepth 1 -maxdepth 1 -type d -name "python3.*" \
@@ -169,7 +169,7 @@ export VIRTUAL_ENV="\${lonesnake_dir}/venv"
 
 # Solve errors involving "Python.h not found" when building
 # Python extensions with a lonesnake environment.
-parent_include_dir="\${lonesnake_dir}/interpreter/include"
+parent_include_dir="\${lonesnake_dir}/interpreter/usr/local/include"
 if [[ -d "\$parent_include_dir" ]]; then
   include_dir_name=\$(find "\$parent_include_dir" \
     -mindepth 1 -maxdepth 1 -type d -name "python3.*" \
@@ -183,7 +183,7 @@ EOM
 
 
 <details>
-<summary>If you wish to show a prefix in your shell prompt indicating whether a lonesnake venv is active (e.g. <code>🐍venv-3.10.4</code>), some code needs to be added to your <code>~/.bashrc</code> or <code>~/.zshrc</code> to check for activation. Click here to show an example code, but be aware it might need adjustments depending on the complexity of your prompt config.</summary>
+<summary>If you wish to show a prefix in your shell prompt indicating whether a lonesnake venv is active (e.g. <code>🐍venv-3.11.0</code>), some code needs to be added to your <code>~/.bashrc</code> or <code>~/.zshrc</code> to check for activation. Click here to show an example code, but be aware it might need adjustments depending on the complexity of your prompt config.</summary>
 
 ```bash
 show_lonesnake_venv_prefix () {
@@ -298,7 +298,7 @@ export PATH="${PIPX_BIN_DIR}:${PATH}"
 ## standalone environment structure
 
 This standalone environment directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.lonesnake` directory is the following:
-* `interpreter` interpreter directory includes `bin`, `include`, etc...
-* `venv` venv directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
+* `interpreter` directory includes `usr/local/bin`, `usr/local/include`, etc...
+* `venv` directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
 
-Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.10.1`). These cache directories enable us to skip the compilation step when the CPython code was already compiled in the past for the requested version.
+Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.11.0`). These cache directories enable us to skip the compilation step when the CPython code was already compiled in the past for the requested version.
