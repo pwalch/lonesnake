@@ -141,7 +141,9 @@ export VIRTUAL_ENV="${lonesnake_dir}/venv"
 # Python extensions with a lonesnake environment.
 parent_include_dir="${lonesnake_dir}/interpreter/include"
 if [[ -d "$parent_include_dir" ]]; then
-  include_dir_name=$(find "$parent_include_dir" -mindepth 1 -maxdepth 1 -type d -name "python3.*" -exec basename {} \;)
+  include_dir_name=$(find "$parent_include_dir" \
+    -mindepth 1 -maxdepth 1 -type d -name "python3.*" \
+    -exec basename {} \;)
   path_add CPATH "${parent_include_dir}/${include_dir_name}"
 fi
 ```
@@ -156,7 +158,7 @@ fi
 <summary>If you often find yourself copying and pasting the project venv exports to your <code>.envrc</code>, click here to see a function to do it automatically. You can paste this function in your <code>~/.bashrc</code> or <code>~/.zshrc</code></summary>
 
 ```bash
-# Print activation exports for lonesnake
+# Print direnv activation instructions for lonesnake
 # Usage: lonesnake-print-activation >> .envrc
 function lonesnake-print-activation() {
 cat << EOM
@@ -169,7 +171,9 @@ export VIRTUAL_ENV="\${lonesnake_dir}/venv"
 # Python extensions with a lonesnake environment.
 parent_include_dir="\${lonesnake_dir}/interpreter/include"
 if [[ -d "\$parent_include_dir" ]]; then
-  include_dir_name=\$(find "\$parent_include_dir" -mindepth 1 -maxdepth 1 -type d -name "python3.*" -exec basename {} \;)
+  include_dir_name=\$(find "\$parent_include_dir" \
+    -mindepth 1 -maxdepth 1 -type d -name "python3.*" \
+    -exec basename {} \;)
   path_add CPATH "\${parent_include_dir}/\${include_dir_name}"
 fi
 EOM
