@@ -322,6 +322,16 @@ function compile_interpreter() {
                 "with 'brew --prefix openssl'. Did you install 'openssl' with brew?"
         fi
         with_openssl_str="--with-openssl=${brew_openssl_prefix}"
+
+        # On macOS, LZMA lib is in a non-standard location when installed
+        # with brew.
+        local brew_xz_prefix=""
+        if ! brew_xz_prefix="$(brew --prefix xz)"; then
+            error_out "You are on macOS, but the LZMA lib path cannot be found" \
+                "with 'brew --prefix xz'. Did you install 'xz' with brew?"
+        fi
+        # Prepend xz include path to existing CFLAGS, adding a space if needed.
+        export CFLAGS="-I${brew_xz_prefix}/include${CFLAGS:+ ${CFLAGS}}"
     fi
 
     echo "  ℹ️  No previous build of CPython $standalone_version was found in the" \
