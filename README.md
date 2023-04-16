@@ -2,23 +2,20 @@
 
 ![main workflow status](https://github.com/pwalch/lonesnake/actions/workflows/main.yml/badge.svg)
 
-`lonesnake` sets up a self-contained Python environment with an interpreter and a venv in single directory. It can be used to create fully isolated Python environments for projects, as well as setting up a global Python environment.
+`lonesnake` is a zero-config Bash tool that generates self-contained Python environments with a single command. Each environment fits in a single directory, including a CPython interpreter built from source and a venv. When a capricious environment breaks, you can just delete the directory and generate a new one easily.
 
-It can be seen as a simpler variant of [pyenv](https://github.com/pyenv/pyenv) for people who do not need to develop against multiple versions of Python simultaneously for the same project.
+It enables you to generate isolated environments not only for projects, but also for global environments or Docker images. It integrates seamlessly with IDEs (VS Code, PyCharm) and dependency management tools (Poetry, pip-tools). It does not impose shell init scripts, so you can activate environments with the method of your choice.
 
 [![asciicast](https://asciinema.org/a/479944.svg)](https://asciinema.org/a/479944)
 
-What does this tool provide compared to other tools?
-* **fully self-contained Python environment**. The environment is contained in a single `.lonesnake` directory, and includes a fully isolated Python interpreter as well as a venv. It is protected against breaking updates by your package manager or you blowing up your environment in one of your projects.
-* **transparent configuration and structure**. No sourcing of slow tool-specific initialization scripts. Auto-activation of venv is enabled with explicit exports.
-* **easy venv setup**. No need to learn many new commands to set up a Python virtual environment. Just install `lonesnake` and run it, and you've got your environment. No previous Python interpreter is needed.
+What are the limitations of `lonesnake`?
 
-What are the limitations of this tool?
-* supports installing only a single Python interpreter version at a time for a specific project
-  * if you need to support multiple versions simultaneously with a fallback order, use [pyenv](https://github.com/pyenv/pyenv) or [asdf](https://github.com/asdf-vm/asdf).
-* supports only CPython 3.7+, older CPython versions and other Python interpreters (e.g. PyPy) are not supported
-* supports only macOS and Linux
-* consumes more disk space than tools that keep a single version of the Python interpreter in `$HOME` (pyenv, asdf), as the interpreter is copied to every project
+- accepts only a single interpreter version per project and per global environment
+- supports CPython 3.7+ but not older CPython versions nor alternative interpreters like Pypy
+- runs on macOS and Linux, but not Windows
+- consumes more disk space than tools that store interpreters in a centralized location
+
+I designed `lonesnake` to be much easier to understand for the average developer than the centralized tools out there. I deliberately renounced many features to keep the code structure simple. But if `lonesnake` is too basic for you, feel free to adopt the well-established [pyenv](https://github.com/pyenv/pyenv) or [asdf](https://github.com/asdf-vm/asdf).
 
 ## installation
 
@@ -40,9 +37,6 @@ brew install lonesnake
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 # https://devguide.python.org/setup/#install-dependencies
 
-# macOS
-brew install curl openssl readline sqlite3 xz zlib
-
 # Ubuntu/Debian/Mint
 sudo apt-get update && sudo apt-get install -y \
   make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev \
@@ -56,13 +50,15 @@ sudo dnf install \
 
 # Arch Linux
 sudo pacman -S --needed curl base-devel openssl zlib xz
+
+# macOS without Brew
+brew install curl openssl readline sqlite3 xz zlib
 ```
 
 </details>
 
-
 <details>
-<summary>download <code>lonesnake</code> to <code>~/.local/bin</code> or some other directory in your <code>PATH</code></summary>
+<summary>download <code>lonesnake</code> to <code>~/.local/bin</code></summary>
 
 ```bash
 mkdir -p ~/.local/bin && \
@@ -70,8 +66,8 @@ mkdir -p ~/.local/bin && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
-* make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your `.bashrc` (Bash) or `.zshrc` (ZSH)
-* check that the script is accessible with `lonesnake --help`
+- make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your `.bashrc` (Bash) or `.zshrc` (ZSH), and open a new shell
+- check that the script is accessible with `lonesnake --help`
 
 </details>
 
@@ -79,26 +75,23 @@ mkdir -p ~/.local/bin && \
 
 **example commands**
 
-* `lonesnake`
-  * creates an environment with the latest CPython version, in the `.lonesnake` directory within the current working directory
-* `lonesnake --py 3.11`
-  * creates an environment with the latest patch of CPython 3.11
-* `lonesnake --py 3.11.0`
-  * creates an environment with CPython 3.11.0
+- `lonesnake`
+  - generates an environment with the latest CPython version, in the `.lonesnake` directory at the root of the current working directory
+- `lonesnake --py 3.11`
+  - same, but with the latest patch of CPython 3.11
+- `lonesnake --py 3.11.0`
+  - same, but with exactly CPython 3.11.0
 
-If a `.lonesnake` directory already exists, `lonesnake` will detect it and ask for confirmation interactively before deleting it.
+If the `.lonesnake` directory already exists, `lonesnake` asks for confirmation before deleting it.
 
 ## automated activation
 
-In most cases, you don't want to activate your Python environment with `source` every time you enter your project directory or use a Python command-line tool. Instead, you want it to auto-activate.
+### project activation with direnv
 
-### local environment auto-activation with direnv
-
-If you want to activate the environment automatically when you enter a project directory, you can use [
-](https://direnv.net/docs/installation.html):
+To activate a lonesnake environment when entering a project directory, you can bring your own shell auto-load tool. If you are undecided, I recommend [direnv](https://direnv.net/docs/installation.html).
 
 <details>
-<summary>install <code>direnv</code> with your package manager</summary>
+<summary>install <code>direnv</code> and register its hook</summary>
 
 ```bash
 # macOS
@@ -114,22 +107,17 @@ sudo dnf install direnv
 sudo pacman -S direnv
 ```
 
+- Bash: in your `~/.bashrc`, append `eval "$(direnv hook bash)"`
+- ZSH: in your `~/.zshrc`, append `eval "$(direnv hook zsh)"`
+
 </details>
 
 <details>
-<summary>register the direnv hook in your shell</summary>
+<summary>generate the project lonesnake environment and enable auto-activation</summary>
 
-* Bash: in your `~/.bashrc`, append `eval "$(direnv hook bash)"`
-* ZSH: in your `~/.zshrc`, append `eval "$(direnv hook zsh)"`
-
-</details>
-
-Once direnv is set up, install a standalone environment in your project and have it auto-activate:
-
-* start a new shell
-* `cd YOUR_PROJECT`
-* `lonesnake` (pass a `--py` if needed, see `--help`)
-* `touch .envrc` and fill it with this:
+- start a new shell then `cd YOUR_PROJECT`
+- `lonesnake`
+- touch `.envrc` then fill it with this code
 
 ```bash
 # lonesnake auto-activation for the project directory
@@ -148,14 +136,17 @@ if [[ -d "$parent_include_dir" ]]; then
 fi
 ```
 
-* `direnv allow`
-* check that `which python` points to your project's standalone environment
-  * if yes, auto-activation is properly enabled!
+- `direnv allow`
+- check that `which python` prints your project's `.lonesnake/venv` directory
 
-> ℹ️ In case of trouble, you can get rid of the environment by running `rm -rf .lonesnake .envrc` at the root of your project.
+> ℹ️ In case of trouble, you can get rid of the lonesnake environment by running `rm -rf .lonesnake .envrc` at the root of your project. Make sure to open a new shell for the change to take effect.
+
+</details>
+
+**Tips**
 
 <details>
-<summary>If you often find yourself copying and pasting the project venv exports to your <code>.envrc</code>, click here to see a function to do it automatically. You can paste this function in your <code>~/.bashrc</code> or <code>~/.zshrc</code></summary>
+<summary>If you find yourself pasting into <code>.envrc</code> files often, automate it with this function for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
 
 ```bash
 # Print direnv activation instructions for lonesnake
@@ -179,11 +170,11 @@ fi
 EOM
 }
 ```
+
 </details>
 
-
 <details>
-<summary>If you wish to show a prefix in your shell prompt indicating whether a lonesnake venv is active (e.g. <code>🐍venv-3.11.0</code>), some code needs to be added to your <code>~/.bashrc</code> or <code>~/.zshrc</code> to check for activation. Click here to show an example code, but be aware it might need adjustments depending on the complexity of your prompt config.</summary>
+<summary>To show a prefix in your shell prompt indicating an active lonesnake venv (e.g. <code>🐍venv-3.11.0</code>), take inspiration from this example code for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
 
 ```bash
 show_lonesnake_venv_prefix () {
@@ -197,23 +188,64 @@ show_lonesnake_venv_prefix () {
 }
 PS1='$(show_lonesnake_venv_prefix)'"$PS1"
 ```
+
 </details>
 
-### IDE support
+### project dependency management
 
-In this section, you will find some pointers to help your IDE find your project's lonesnake environment.
+Provided you have configured `direnv` as in the previous section, dependency management tools integrate seamlessly into `lonesnake` venvs.
 
-**VSCode**
+<details>
+<summary>pip-tools</summary>
+
+[pip-tools](https://github.com/jazzband/pip-tools)' sync command installs packages in the current venv. Therefore, all packages are installed in the `.lonesnake` venv directory by default:
+
+- `cd YOUR_PROJECT`
+- `pip install pip-tools`
+- `pip-sync PINNED_COMPILED_REQUIREMENTS`
+
+</details>
+
+<details>
+<summary>Poetry</summary>
+
+You can integrate [Poetry](https://github.com/python-poetry/poetry) into the `.lonesnake` directory by specifying the `POETRY_VIRTUALENVS_PATH` environment variable:
+
+- `cd YOUR_PROJECT` (where your `pyproject.toml` is)
+- append the following to your `.envrc`:
+
+```bash
+export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
+```
+
+- `direnv allow`
+- `pip install poetry`
+- `poetry install`
+- check with `poetry debug` that the "Virtualenv Path" is in a child directory of `.lonesnake/poetry_virtualenvs`
+
+**Tips**
+
+> ℹ️ In case of trouble, you can get rid of the Poetry virtualenvs using `rm -rf .lonesnake/poetry_virtualenvs`. Make sure to open a new shell for the change to take effect.
+
+</details>
+
+### project IDE support
+
+<details>
+<summary>Visual Studio Code</summary>
 
 - open a project directory that contains a lonesnake environment at its root
 - click `File > Preferences > Settings` and then go to `Workspace` and search for `python.defaultInterpreterPath`
 - set this path to `${workspaceFolder}/.lonesnake/venv/bin/python`
 - press `CMD/CTRL + SHIFT + P` or click `View > Command Palette`, then choose `Python: Select Interpreter`
-- choose ``Use Python from `python.defaultInterpreterPath` setting``
+- choose `` Use Python from `python.defaultInterpreterPath` setting ``
   - note that after the word `setting`, you should see `./.lonesnake/venv/bin/python`
 - when you open the integrated terminal, VS Code should now be sourcing `.lonesnake/venv/bin/activate`
 
-**PyCharm**
+</details>
+
+<details>
+<summary>PyCharm</summary>
 
 - open a project directory that contains a lonesnake environment at its root
 - click `File > Settings > Project: YOUR_PROJECT > Python Interpreter`
@@ -225,63 +257,41 @@ In this section, you will find some pointers to help your IDE find your project'
 - click `OK`, then wait for the environment to be indexed
 - when you create a new `Run/Debug` configuration, the `Python interpreter` field should point to the lonesnake environment
 
-### project dependency management
+</details>
 
-After setting up auto-activation with `direnv`, project dependency management tools can easily be integrated into the `.lonesnake` directory. This section shows how to do it for some commonly used tools.
+### user-wide global auto-activation
 
-**pip-tools**
+<details>
+<summary>To activate a lonesnake environment user-wide when opening a new shell, you can generate one at the root of your <code>HOME</code> and register it in your <code>.bashrc</code> or <code>.zshrc</code>.</summary>
 
-[pip-tools](https://github.com/jazzband/pip-tools)' sync command installs packages to the current venv. Therefore, all packages will be installed in the `.lonesnake` venv directory without any additional configuration:
-* `cd YOUR_PROJECT`
-* `pip install pip-tools`
-* `pip-sync PINNED_COMPILED_REQUIREMENTS`
-
-**Poetry**
-
-[Poetry](https://github.com/python-poetry/poetry) can be integrated into the `.lonesnake` directory by specifying the `POETRY_VIRTUALENVS_PATH` environment variable:
-* `cd YOUR_PROJECT` (where your `pyproject.toml` is)
-* append the following to `.envrc`:
-
-```bash
-export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
-```
-
-* `direnv allow`
-* `pip install poetry`
-* `poetry install`
-* check with `poetry debug` that the "Virtualenv Path" of Poetry is located in a child directory of `.lonesnake/poetry_virtualenvs`
-  * if yes, Poetry is properly configured to use the `lonesnake` environment.
-
-> ℹ️ In case of trouble, you can get rid of the Poetry virtualenvs using `rm -rf .lonesnake/poetry_virtualenvs`.
-
-### global environment auto-activation for a user
-
-If you intended to use your standalone environment as a global Python environment for your user, you want it to activate automatically when you start a new shell:
-
-* `cd ~`
-* `lonesnake`
-* in your `.bashrc` (Bash) or `.zshrc` (ZSH), append the following:
+- `cd ~`
+- `lonesnake`
+- in your `.bashrc` (Bash) or `.zshrc` (ZSH), append the following:
 
 ```bash
 # global lonesnake auto-activation
 export PATH="${HOME}/.lonesnake/venv/bin:${PATH}"
 ```
 
-* exit your shell and start a new one
-* check that `which python` points to your standalone environment
-  * if yes, auto-activation is properly enabled!
+- exit your shell and start a new one
+- check that `which python` points to your lonesnake environment
 
-> ℹ️ In case of trouble, you can get rid of the environment by removing the export statements from your `.bashrc` or `.zshrc` and running `rm -rf ~/.lonesnake`.
+**Tips**
 
-**pipx support**
+> ℹ️ In case of trouble, you can get rid of the lonesnake environment by removing the export statements from your `.bashrc` or `.zshrc` and running `rm -rf ~/.lonesnake`. Make sure to open a new shell for the change to take effect.
 
-After setting up a global standalone environment, it is recommended to install `pipx` to manage Python command-line tools. Indeed, `pipx` installs all tools in isolated venvs so they don't break each other or interfere with the global environment. To install `pipx`, do the following:
+</details>
 
-* append these lines to your `.bashrc` or `.zshrc`:
+<details>
+<summary>pipx support</summary>
+
+After setting up a global lonesnake environment, you should install `pipx` to manage Python command-line tools. In the same spirit as `lonesnake`, `pipx` installs all tools in isolated venvs so they don't break each other or interfere with the global one. To integrate `pipx`:
+
+- append these lines to your `.bashrc` or `.zshrc`:
 
 ```bash
 # By default, pipx stores its files in "~/.local/pipx" and "~/.local/bin", but we
-# configure it to use sub-directories of the standalone environment:
+# configure it to use sub-directories of the lonesnake global environment:
 # "~/.lonesnake/pipx_bin" and "~/.lonesnake/pipx_home". Thanks to this,
 # we keep everything related to the global environment in the same place.
 export PIPX_HOME="${HOME}/.lonesnake/pipx_home"
@@ -289,16 +299,21 @@ export PIPX_BIN_DIR="${HOME}/.lonesnake/pipx_bin"
 export PATH="${PIPX_BIN_DIR}:${PATH}"
 ```
 
-* exit your shell and start a new one
-* `pip install pipx`
-* from now on, use `pipx install` to install Python CLI tools such as `httpie`
+- exit your shell and start a new one
+- `pip install pipx`
+- from now on, use `pipx install` to install Python CLI tools such as `httpie`
 
-> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `pip uninstall pipx`.
+**Tips**
 
-## standalone environment structure
+> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `pip uninstall pipx`. Make sure to open a new shell for the change to take effect.
 
-This standalone environment directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html). That is, the content of the `.lonesnake` directory is the following:
-* `interpreter` directory includes `usr/local/bin`, `usr/local/include`, etc...
-* `venv` directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
+</details>
 
-Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.11.0`). These cache directories enable us to skip the compilation step when the CPython code was already compiled in the past for the requested version.
+## lonesnake environment structure
+
+This `.lonesnake` directory includes a Python interpreter built from [source](https://www.python.org/downloads/source/), as well as a [venv](https://docs.python.org/3/library/venv.html):
+
+- `interpreter` directory includes `usr/local/bin`, `usr/local/include`, etc...
+- `venv` directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
+
+Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.11.0`). Cache directories enable us to skip the compilation step when CPython was already compiled for the requested version.
