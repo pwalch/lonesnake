@@ -62,7 +62,7 @@ brew install curl openssl readline sqlite3 xz zlib
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.19.0/lonesnake && \
+  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.20.0/lonesnake && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
