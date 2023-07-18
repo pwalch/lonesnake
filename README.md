@@ -232,7 +232,7 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 ### project IDE support
 
 <details>
-<summary>Visual Studio Code</summary>
+<summary>Visual Studio Code (VS Code)</summary>
 
 - open a project directory that contains a lonesnake environment at its root
 - click `File > Preferences > Settings` and then go to `Workspace` and search for `python.defaultInterpreterPath`
