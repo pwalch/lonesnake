@@ -24,6 +24,7 @@ readonly LATEST_PATCH_CP38="18"
 readonly LATEST_PATCH_CP39="18"
 readonly LATEST_PATCH_CP310="13"
 readonly LATEST_PATCH_CP311="5"
+readonly LATEST_PATCH_CP312="0"
 
 # Default CPython version if the user does not request a specific version
 readonly DEFAULT_CP_MINOR="3.11"
@@ -164,6 +165,10 @@ function guess_cpython_patch_number() {
         ;;
         11)
            echo "$LATEST_PATCH_CP311"
+           return
+        ;;
+        12)
+           echo "$LATEST_PATCH_CP312"
            return
         ;;
     esac
