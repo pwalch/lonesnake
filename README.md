@@ -283,6 +283,46 @@ export PATH="${HOME}/.lonesnake/venv/bin:${PATH}"
 </details>
 
 <details>
+<summary>Pip safeguard shim against accidental pollution of global environment</summary>
+
+Sometimes, you will forget to create a project-specific lonesnake environment or to configure its auto-activation. In this case, all `pip install` commands you want to run will be forwarded to the global environment and pollute its package list.
+
+To safeguard against this pollution, you can intercept `pip` commands by adding the following shim to your `~/.bashrc` or `~/.zshrc`:
+
+```bash
+# Safeguard shim against accidental 'pip install' to
+# the global lonesnake environment.
+# Call '~/.lonesnake/venv/bin/pip' to bypass.
+function pip () {
+  if [[ -z "$VIRTUAL_ENV" ]]; then
+    echo "[ERROR] Cannot run 'pip' command outside" \
+      "of a VIRTUAL_ENV."
+    return 1
+  fi
+
+  local active_pip=""
+  if ! active_pip="$(whence -p pip)"; then
+    echo "[ERROR] There is no 'pip' command in PATH:" \
+      "${PATH}"
+    return 1
+  fi
+
+  local global_pip=""
+  global_pip="${HOME}/.lonesnake/venv/bin/pip"
+  if [[ -f "$global_pip" ]] && \
+      [[ "$active_pip" == "$global_pip" ]]; then
+    echo "[ERROR] Cannot run 'pip' command with global" \
+        "environment: ${global_pip}"
+    return 1
+  fi
+
+  command pip "$@"
+}
+```
+
+</details>
+
+<details>
 <summary>pipx support</summary>
 
 After setting up a global lonesnake environment, you should install `pipx` to manage Python command-line tools. In the same spirit as `lonesnake`, `pipx` installs all tools in isolated venvs so they don't break each other or interfere with the global one. To integrate `pipx`:
@@ -300,12 +340,12 @@ export PATH="${PIPX_BIN_DIR}:${PATH}"
 ```
 
 - exit your shell and start a new one
-- `pip install pipx`
+- `~/.lonesnake/venv/bin/pip install pipx`
 - from now on, use `pipx install` to install Python CLI tools such as `httpie`
 
 **Tips**
 
-> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `pip uninstall pipx`. Make sure to open a new shell for the change to take effect.
+> ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `~/.lonesnake/venv/bin/pip uninstall pipx`. Make sure to open a new shell for the change to take effect.
 
 </details>
 
