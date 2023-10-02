@@ -234,6 +234,7 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 <details>
 <summary>Visual Studio Code (VS Code)</summary>
 
+Auto-Activation:
 - open a project directory that contains a lonesnake environment at its root
 - click `File > Preferences > Settings` and then go to `Workspace` and search for `python.defaultInterpreterPath`
 - set this path to `${workspaceFolder}/.lonesnake/venv/bin/python`
@@ -241,6 +242,10 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 - choose `` Use Python from `python.defaultInterpreterPath` setting ``
   - note that after the word `setting`, you should see `./.lonesnake/venv/bin/python`
 - when you open the integrated terminal, VS Code should now be sourcing `.lonesnake/venv/bin/activate`
+
+File Exclusion:
+- click `File > Preferences > Settings` and then go to `User` and search for `files.exclude`
+- click `Add Pattern` and register `**/.lonesnake`
 
 </details>
 
