@@ -23,7 +23,7 @@ readonly LATEST_PATCH_CP37="17"
 readonly LATEST_PATCH_CP38="18"
 readonly LATEST_PATCH_CP39="18"
 readonly LATEST_PATCH_CP310="13"
-readonly LATEST_PATCH_CP311="6"
+readonly LATEST_PATCH_CP311="7"
 readonly LATEST_PATCH_CP312="0"
 
 # Default CPython version if the user does not request a specific version
