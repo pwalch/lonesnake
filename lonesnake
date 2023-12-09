@@ -27,8 +27,8 @@ readonly LATEST_PATCH_CP311="7"
 readonly LATEST_PATCH_CP312="1"
 
 # Default CPython version if the user does not request a specific version
-readonly DEFAULT_CP_MINOR="3.11"
-readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP311}"
+readonly DEFAULT_CP_MINOR="3.12"
+readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP312}"
 
 # Color markers
 readonly CLR_BOLD="\033[1m"  # bold
