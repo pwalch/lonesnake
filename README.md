@@ -21,15 +21,13 @@ I designed `lonesnake` to be much easier to understand for the average developer
 
 ### macOS installation with Brew
 
-```bash
-brew tap pwalch/lonesnake
-brew install lonesnake
-```
+- Step 1: `brew tap pwalch/lonesnake`
+- Step 2: `brew install lonesnake`
 
 ### Linux and manual installation
 
 <details>
-<summary>install the CPython build dependencies and <code>curl</code>, depending on your OS</summary>
+<summary>Step 1: install the CPython build dependencies and <code>curl</code>, depending on your OS</summary>
 
 ```bash
 # The instructions below are taken from the pyenv Wiki and the python.org dev guide.
@@ -58,7 +56,7 @@ brew install curl openssl readline sqlite3 xz zlib
 </details>
 
 <details>
-<summary>download <code>lonesnake</code> to <code>~/.local/bin</code></summary>
+<summary>Step 2: download <code>lonesnake</code> to <code>~/.local/bin</code></summary>
 
 ```bash
 mkdir -p ~/.local/bin && \
