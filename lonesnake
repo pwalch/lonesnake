@@ -552,7 +552,7 @@ with the following command:
 
 arg_standalone_version="$DEFAULT_CP_VERSION"
 while [[ "$#" -gt 0 ]]; do
-    case $1 in
+    case "$1" in
         --py)
             if [ -z "${2+x}" ]; then
                 error_out "Please pass a version number, such as" \
