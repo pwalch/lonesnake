@@ -1,0 +1,303 @@
+#!/usr/bin/env bash
+
+# Copyright (C) 2021-2023 Pierre Walch
+# This code is licensed under the GNU GPL, see the LICENSE file.
+# https://github.com/pwalch/lonesnake/
+
+set -euo pipefail
+
+PROG_NAME="$(basename "$0")"
+readonly PROG_VERSION="0.26.0"
+
+readonly STANDALONE_DIRNAME=".lonesnake"
+
+# Color markers
+readonly CLR_BOLD="\033[1m"  # bold
+readonly CLR_UDL="\033[4m"  # underline
+readonly CLR_RED="\033[31m"  # red
+readonly CLR_BGR="\033[2m"  # background
+readonly CLR_ITL="\033[3m"  # italic
+readonly CLR_END="\033[0m"  # end-marker
+
+function print_error() {
+    echo -e "${CLR_RED}[ERROR] $*${CLR_END}" >&2
+}
+
+function error_out() {
+    print_error "$@"
+    exit 1
+}
+
+function usage() {
+echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
+  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} project ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}] ${CLR_BOLD}[--help]${CLR_END}
+
+  Creates a new lonesnake environment, then adds the following
+  configurations if requested:
+  ${CLR_BOLD}--direnv${CLR_END} populates the .envrc with lonesnake auto-activation,
+    configures Poetry to put its files in lonesnake directory,
+    then runs 'direnv allow'. Only the block delimited by
+    '### BEGIN BLOCK LONESNAKE' and '### END BLOCK LONESNAKE'
+    are modified.
+  ${CLR_BOLD}--vscode${CLR_END} populates VS Code's workspace settings with its
+    'python.defaultInterpreterPath' setting set to use the
+    lonesnake environment, and 'files.exclude' to exclude
+    the lonesnake environment. Other options in the VS Code
+    workspace settings are preserved.
+
+  For more details about the ${CLR_BOLD}--py${CLR_END} argument, check
+  out ${CLR_BOLD}lonesnake --help${CLR_END}."
+}
+
+kit_script=$(cat <<'EOF'
+#!/usr/bin/env python
+import json
+import os
+import subprocess
+import sys
+from argparse import ArgumentParser
+from typing import cast
+
+ENVRC_PATH = ".envrc"
+
+ENVRC_BLOCK_BEGIN_MARKER = "### BEGIN BLOCK LONESNAKE"
+ENVRC_BLOCK_END_MARKER = "### END BLOCK LONESNAKE"
+ENVRC_BLOCK = (
+    ENVRC_BLOCK_BEGIN_MARKER
+    + "\n"
+    + r"""
+# lonesnake auto-activation for the project directory
+lonesnake_dir="${PWD}/.lonesnake"
+PATH_add "${lonesnake_dir}/venv/bin"
+export VIRTUAL_ENV="${lonesnake_dir}/venv"
+
+# Solve errors involving "Python.h not found" when building
+# Python extensions with a lonesnake environment.
+parent_include_dir="${lonesnake_dir}/interpreter/usr/local/include"
+if [[ -d "$parent_include_dir" ]]; then
+  include_dir_name=$(find "$parent_include_dir" \
+    -mindepth 1 -maxdepth 1 -type d -name "python3.*" \
+    -exec basename {} \;)
+  path_add CPATH "${parent_include_dir}/${include_dir_name}"
+fi
+
+export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
+""".strip()
+    + "\n"
+    + ENVRC_BLOCK_END_MARKER
+)
+
+VSCODE_DIR_NAME = ".vscode"
+VSCODE_SETTINGS_PATH = os.path.join(VSCODE_DIR_NAME, "settings.json")
+
+
+def main() -> None:
+    parser = ArgumentParser()
+    parser.add_argument("--direnv", action="store_true")
+    parser.add_argument("--vscode", action="store_true")
+
+    args = parser.parse_args()
+
+    run(cast(bool, args.direnv), cast(bool, args.vscode))
+
+
+def run(make_direnv: bool, make_vscode: bool) -> None:
+    if make_direnv:
+        populate_envrc()
+        run_direnv_allow()
+
+    if make_vscode:
+        populate_vscode_settings()
+
+
+def populate_envrc() -> None:
+    envrc_str = ""
+    if os.path.exists(ENVRC_PATH):
+        with open(ENVRC_PATH) as envrc_file:
+            envrc_str = envrc_file.read()
+
+    begin_block_cursor = envrc_str.find(ENVRC_BLOCK_BEGIN_MARKER)
+    end_block_cursor = envrc_str.find(
+        ENVRC_BLOCK_END_MARKER, begin_block_cursor + len(ENVRC_BLOCK_BEGIN_MARKER)
+    )
+
+    if begin_block_cursor == -1 or end_block_cursor == -1:
+        # If .envrc does not contain the block, append it
+        envrc_str = (envrc_str + f"\n{ENVRC_BLOCK}\n").lstrip()
+    else:
+        # If .envrc contains the block already, replace it
+        envrc_str = (
+            envrc_str[:begin_block_cursor]
+            + ENVRC_BLOCK
+            + envrc_str[end_block_cursor + len(ENVRC_BLOCK_END_MARKER) :]
+        )
+
+    with open(ENVRC_PATH, "w") as envrc_file:
+        envrc_file.write(envrc_str)
+
+
+def run_direnv_allow() -> None:
+    try:
+        subprocess.run(
+            ["direnv", "allow"], check=True, text=True, stderr=subprocess.PIPE
+        )
+    except subprocess.CalledProcessError as e:
+        direnv_error = cast(str, e.stderr)
+        if direnv_error:
+            print(direnv_error, file=sys.stderr)
+        raise
+
+
+def populate_vscode_settings() -> None:
+    if not os.path.exists(VSCODE_DIR_NAME):
+        os.mkdir(VSCODE_DIR_NAME)
+
+    if os.path.exists(VSCODE_SETTINGS_PATH):
+        with open(VSCODE_SETTINGS_PATH) as settings_file:
+            settings = cast(dict[str, object], json.load(settings_file))
+    else:
+        settings = {}
+
+    settings[
+        "python.defaultInterpreterPath"
+    ] = "${workspaceFolder}/.lonesnake/venv/bin/python"
+
+    file_exclusion_key = "files.exclude"
+    if file_exclusion_key not in settings:
+        settings[file_exclusion_key] = {}
+
+    file_exclusion_dict = cast(dict[str, bool], settings[file_exclusion_key])
+    file_exclusion_dict["**/.lonesnake"] = True
+
+    with open(VSCODE_SETTINGS_PATH, "w") as settings_file:
+        json.dump(settings, settings_file, indent=2)
+
+
+if __name__ == "__main__":
+    main()
+EOF
+)
+
+function configure_project() {
+    if [[ ! -x "$(command -v lonesnake)" ]]; then
+        error_out "'lonesnake' command not found, please install it."
+    fi
+
+    py_version=""
+    populate_direnv="0"
+    populate_vscode="0"
+    while [[ "$#" -gt 0 ]]; do
+        case "$1" in
+            --py)
+                if [ -z "${2+x}" ]; then
+                    error_out "Please pass a version number." \
+                        "Run 'lonesnake --help' for more details."
+                fi
+                py_version="$2"
+                shift
+            ;;
+
+            --direnv)
+                populate_direnv="1"
+
+            ;;
+
+            --vscode)
+                populate_vscode="1"
+            ;;
+
+            --help|-h)
+                usage
+                exit 1
+            ;;
+
+            --version|-v)
+                echo "${PROG_NAME} ${PROG_VERSION}"
+                exit 1
+            ;;
+
+            *)
+                error_out "Could not recognize option '$1'."
+            ;;
+        esac
+        shift
+    done
+
+    if [[ "$populate_direnv" -eq 1 ]]; then
+        if [[ ! -x "$(command -v direnv)" ]]; then
+            error_out "'direnv' command not found, please install it."
+        fi
+    fi
+
+    populate_lonesnake="1"
+    if [[ -e "$STANDALONE_DIRNAME" ]]; then
+        answer=""
+        echo "❓ An environment already exists at '$STANDALONE_DIRNAME'."
+        read -rp "   Do you want to re-generate it? (y/n) " answer
+        case "$answer" in
+            y|Y|yes|YES)
+                rm -rf "$STANDALONE_DIRNAME"
+            ;;
+            n|N|no|NO)
+                echo "  ⏭️  keeping existing environment"
+                populate_lonesnake="0"
+            ;;
+            *)
+                error_out "Please re-try and answer 'y' or 'n'."
+            ;;
+        esac
+    fi
+
+    if [[ "$populate_lonesnake" -eq 1 ]]; then
+        if [[ -n "$py_version" ]]; then
+            if ! lonesnake --py "$py_version"; then
+                error_out "Could not generate lonesnake environment for" \
+                    "version '$py_version'"
+            fi
+        else
+            if ! lonesnake; then
+                error_out "Could not generate lonesnake environment."
+            fi
+        fi
+    fi
+
+    venv_interpreter_path="$STANDALONE_DIRNAME/venv/bin/python"
+    if [[ ! -e "$venv_interpreter_path" ]]; then
+        error_out "venv interpreter does not exist: $venv_interpreter_path"
+    fi
+
+    if [[ "$populate_direnv" -eq 1 ]]; then
+        echo "➖ populating .envrc"
+        echo "$kit_script" | "$venv_interpreter_path" - --direnv
+        echo "  ✅ populated"
+    fi
+
+    if [[ "$populate_vscode" -eq 1 ]]; then
+        echo "➖ populating VS Code workspace settings"
+        echo "$kit_script" | "$venv_interpreter_path" - --vscode
+        echo "  ✅ populated"
+    fi
+}
+
+if [[ "$#" -eq 0 ]]; then
+    print_error "Invalid arguments."
+    echo
+    usage
+    exit 1
+fi
+
+if [[ "$#" -eq 1 ]]; then
+    if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
+        usage
+        exit 1
+    fi
+fi
+
+mode="$1"
+shift
+
+if [[ "$mode" == "project" ]]; then
+    configure_project "$@"
+else
+    error_out "Invalid mode: ${mode}"
+fi

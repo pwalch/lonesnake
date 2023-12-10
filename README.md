@@ -140,6 +140,8 @@ fi
 
 **Tips**
 
+If you have `lonesnake-kit`, you can use <code>lonesnake-kit --direnv</code> to automatically populate `.envrc`.
+
 <details>
 <summary>If you find yourself pasting into <code>.envrc</code> files often, automate it with this function for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
 
@@ -220,6 +222,8 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 
 **Tips**
 
+If you have `lonesnake-kit`, note that <code>lonesnake-kit --direnv</code> populates the Poetry environment variables in `.envrc`.
+
 > ℹ️ In case of trouble, you can get rid of the Poetry virtualenvs using `rm -rf .lonesnake/poetry_virtualenvs`. Make sure to open a new shell for the change to take effect.
 
 </details>
@@ -241,6 +245,8 @@ Auto-Activation:
 File Exclusion:
 - click `File > Preferences > Settings` and then go to `User` and search for `files.exclude`
 - click `Add Pattern` and register `**/.lonesnake`
+
+If you have `lonesnake-kit`, note that <code>lonesnake-kit --vscode</code> populates the `settings.json` of the workspace in the working directory.
 
 </details>
 
@@ -348,6 +354,24 @@ export PATH="${PIPX_BIN_DIR}:${PATH}"
 > ℹ️ In case of trouble, you can get rid of your pipx installation by running `rm -rf ~/.lonesnake/pipx_*` and `~/.lonesnake/venv/bin/pip uninstall pipx`. Make sure to open a new shell for the change to take effect.
 
 </details>
+
+## optional kit
+
+If you use `direnv`, Poetry, VS Code or some other popular tools, you might find `lonesnake-kit` useful. This program creates a new `lonesnake` environment and then automatically populates `.envrc`, `.vscode/settings.json`, etc... to configure your projects faster.
+
+Before using `lonesnake-kit`, make sure to read the instructions for vanilla `lonesnake`. Once you are familiar with it, check out available integrations with `lonesnake-kit --help`.
+
+### kit macOS installation with Brew
+
+`brew install lonesnake-kit`
+
+### kit Linux installation with curl
+
+```bash
+mkdir -p ~/.local/bin && \
+  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.26.0/lonesnake-kit && \
+  chmod u+x ~/.local/bin/lonesnake-kit
+```
 
 ## lonesnake environment structure
 
