@@ -381,3 +381,16 @@ This `.lonesnake` directory includes a Python interpreter built from [source](ht
 - `venv` directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
 
 Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.11.0`). Cache directories enable us to skip the compilation step when CPython was already compiled for the requested version.
+
+## lonesnake environment construction
+
+To construct the `.lonesnake` directory, `lonesnake` follows the standard CPython build process, but with extra sanity checks:
+
+- before CPython build
+  - check if there is Internet access to python.org, otherwise you cannot download anything
+- during CPython build
+   - error out if Python could not be compiled with OpenSSL, as it would make Pip unusable
+   - on macOS, use Brew's OpenSSL and LZMA libraries instead of system ones for consistency
+- after generating venv
+  - upgrade Pip to latest version
+  - install setuptools + wheel as they are pre-requisites for many other packages
