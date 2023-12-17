@@ -24,7 +24,7 @@ I designed `lonesnake` to be much easier to understand for the average developer
 - Step 1: `brew tap pwalch/lonesnake`
 - Step 2: `brew install lonesnake`
 
-### Linux and manual installation
+### Linux installation with package manager and curl
 
 <details>
 <summary>Step 1: install the CPython build dependencies and <code>curl</code>, depending on your OS</summary>
@@ -48,9 +48,6 @@ sudo dnf install \
 
 # Arch Linux
 sudo pacman -S --needed curl base-devel openssl zlib xz
-
-# macOS without Brew
-brew install curl openssl readline sqlite3 xz zlib
 ```
 
 </details>
