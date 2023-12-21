@@ -369,7 +369,7 @@ Before using `lonesnake-kit`, make sure to read the instructions for vanilla `lo
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.27.0/lonesnake-kit && \
+  curl -sL -o ~/.local/bin/lonesnake-kit https://github.com/pwalch/lonesnake/releases/download/0.27.0/lonesnake-kit && \
   chmod u+x ~/.local/bin/lonesnake-kit
 ```
 
