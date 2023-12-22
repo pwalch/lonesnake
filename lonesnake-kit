@@ -249,16 +249,24 @@ function configure_project() {
     fi
 
     if [[ "$populate_lonesnake" -eq 1 ]]; then
+        echo "➖ generating .lonesnake"
+        local lonesnake_error=""
         if [[ -n "$py_version" ]]; then
-            if ! lonesnake --py "$py_version"; then
+            if ! lonesnake_error="$(lonesnake --py "$py_version" 2>&1 >/dev/null)"; then
+                echo "$lonesnake_error" >&2
                 error_out "Could not generate lonesnake environment for" \
-                    "version '$py_version'"
+                    "CPython version '${py_version}'. Please try calling" \
+                    "lonesnake directly with 'lonesnake --py ${py_version}'."
             fi
         else
-            if ! lonesnake; then
-                error_out "Could not generate lonesnake environment."
+            if ! lonesnake_error="$(lonesnake 2>&1 >/dev/null)"; then
+                echo "$lonesnake_error" >&2
+                error_out "Could not generate lonesnake environment." \
+                    "Please try calling lonesnake directly with" \
+                    "'lonesnake'."
             fi
         fi
+        echo "  ✅ generated"
     fi
 
     venv_interpreter_path="$STANDALONE_DIRNAME/venv/bin/python"
