@@ -30,23 +30,37 @@ function error_out() {
 
 function usage() {
 echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
-  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} project ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}] ${CLR_BOLD}[--help]${CLR_END}
+  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} {project} ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
+  Examples:
+    ${PROG_NAME} project --direnv
+    ${PROG_NAME} project --direnv --vscode --py 3.11
 
   Creates a new lonesnake environment, then adds the following
   configurations if requested:
+
   ${CLR_BOLD}--direnv${CLR_END} populates the .envrc with lonesnake auto-activation,
     configures Poetry to put its files in lonesnake directory,
     then runs 'direnv allow'. Only the block delimited by
     '### BEGIN BLOCK LONESNAKE' and '### END BLOCK LONESNAKE'
     are modified.
+
   ${CLR_BOLD}--vscode${CLR_END} populates VS Code's workspace settings with its
     'python.defaultInterpreterPath' setting set to use the
     lonesnake environment, and 'files.exclude' to exclude
     the lonesnake environment. Other options in the VS Code
     workspace settings are preserved.
 
-  For more details about the ${CLR_BOLD}--py${CLR_END} argument, check
-  out ${CLR_BOLD}lonesnake --help${CLR_END}."
+  ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END} is the CPython interpreter version you want
+    to install. Run 'lonesnake --help' for more details.
+
+  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}
+      Print version number of $PROG_NAME.
+
+  ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}
+      Print this help message.
+
+  This program currently provides only a single sub-command:
+  ${CLR_BOLD}project${CLR_END}. In the future, new sub-commands will be added."
 }
 
 kit_script=$(cat <<'EOF'
