@@ -326,5 +326,6 @@ shift
 if [[ "$mode" == "project" ]]; then
     configure_project "$@"
 else
-    error_out "Invalid mode: ${mode}"
+    error_out "Invalid subcommand: '${mode}'. There is only the" \
+        "'project' subcommand as of now."
 fi
