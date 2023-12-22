@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROG_VERSION="0.28.1"
+readonly PROG_VERSION="0.28.2"
 
 PROG_NAME="$(basename "$0")"
 readonly PROG_NAME
