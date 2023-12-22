@@ -309,6 +309,11 @@ if [[ "$#" -eq 0 ]]; then
 fi
 
 if [[ "$#" -eq 1 ]]; then
+    if [[ "$1" == "-v" ]] || [[ "$1" == "--version" ]]; then
+        echo "${PROG_NAME} ${PROG_VERSION}"
+        exit 1
+    fi
+
     if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
         usage
         exit 1
