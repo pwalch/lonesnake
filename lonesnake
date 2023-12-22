@@ -41,6 +41,10 @@ readonly CLR_END="\033[0m"  # end-marker
 function usage() {
 echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
   Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
+  Examples:
+    lonesnake
+    lonesnake --py ${DEFAULT_CP_MINOR}
+    lonesnake --py ${DEFAULT_CP_VERSION}
 
   Creates a standalone Python environment in a new directory named
   '$STANDALONE_DIRNAME' inside your working directory. This environment includes
