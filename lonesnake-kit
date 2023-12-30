@@ -35,7 +35,7 @@ function error_out() {
 }
 
 function usage_root() {
-echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
+echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
   Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} {project} ...
 
   Provides utilities that make it easier to configure lonesnake
@@ -44,6 +44,7 @@ echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
   This program currently provides only a single sub-command:
   ${CLR_BOLD}project${CLR_END}. In the future, new sub-commands will be added.
 
+${CLR_BOLD}OPTIONS${CLR_END}
   ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}
       Print version number of $PROG_NAME.
 
