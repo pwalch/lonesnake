@@ -31,12 +31,18 @@ readonly DEFAULT_CP_MINOR="3.12"
 readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP312}"
 
 # Color markers
-readonly CLR_BOLD="\033[1m"  # bold
-readonly CLR_UDL="\033[4m"  # underline
-readonly CLR_RED="\033[31m"  # red
-readonly CLR_BGR="\033[2m"  # background
-readonly CLR_ITL="\033[3m"  # italic
-readonly CLR_END="\033[0m"  # end-marker
+CLR_BOLD=""
+CLR_UDL=""
+CLR_RED=""
+CLR_BGR=""
+CLR_END=""
+if [[ -x "$(command -v tput)" ]]; then
+    CLR_BOLD="$(tput bold)"  # bold
+    CLR_UDL="$(tput smul)"  # underline
+    CLR_RED="$(tput setaf 1)"  # red
+    CLR_BGR="$(tput setab 0)"  # background
+    CLR_END="$(tput sgr0)"  # end-marker
+fi
 
 function usage() {
 echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} ${PROG_VERSION}
@@ -546,10 +552,10 @@ You can activate your environment manually for the current shell
 with the following command:
   ${CLR_BGR}source ${venv_rel_dir}/bin/activate${CLR_END}
 
-ℹ️  Note that manual activations ${CLR_ITL}do not${CLR_END} persist when opening
+ℹ️  Note that manual activations do not persist when opening
    a new shell.
 
-💡 To activate the environment ${CLR_ITL}automatically${CLR_END}, follow these
+💡 To activate the environment automatically, follow these
    instructions:
       https://github.com/pwalch/lonesnake#automated-activation"
 }
