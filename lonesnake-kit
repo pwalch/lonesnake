@@ -28,9 +28,26 @@ function error_out() {
     exit 1
 }
 
-function usage() {
+function usage_root() {
 echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
-  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} {project} ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
+  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} {project} ...
+
+  Provides utilities that make it easier to configure lonesnake
+  with popular tools.
+
+  This program currently provides only a single sub-command:
+  ${CLR_BOLD}project${CLR_END}. In the future, new sub-commands will be added.
+
+  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}
+      Print version number of $PROG_NAME.
+
+  ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}
+      Print this help message."
+}
+
+function usage_project() {
+echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} project
+  Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} project ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
   Examples:
     ${PROG_NAME} project --direnv
     ${PROG_NAME} project --direnv --vscode --py 3.11
@@ -53,14 +70,8 @@ echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END}
   ${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END} is the CPython interpreter version you want
     to install. Run 'lonesnake --help' for more details.
 
-  ${CLR_BOLD}--version${CLR_END} or ${CLR_BOLD}-v${CLR_END}
-      Print version number of $PROG_NAME.
-
   ${CLR_BOLD}--help${CLR_END} or ${CLR_BOLD}-h${CLR_END}
-      Print this help message.
-
-  This program currently provides only a single sub-command:
-  ${CLR_BOLD}project${CLR_END}. In the future, new sub-commands will be added."
+      Print this help message."
 }
 
 kit_script=$(cat <<'EOF'
@@ -221,12 +232,7 @@ function configure_project() {
             ;;
 
             --help|-h)
-                usage
-                exit 1
-            ;;
-
-            --version|-v)
-                echo "${PROG_NAME} ${PROG_VERSION}"
+                usage_project
                 exit 1
             ;;
 
@@ -304,7 +310,7 @@ function configure_project() {
 if [[ "$#" -eq 0 ]]; then
     print_error "Invalid arguments."
     echo
-    usage
+    usage_root
     exit 1
 fi
 
@@ -315,7 +321,7 @@ if [[ "$#" -eq 1 ]]; then
     fi
 
     if [[ "$1" == "-h" ]] || [[ "$1" == "--help" ]]; then
-        usage
+        usage_root
         exit 1
     fi
 fi
