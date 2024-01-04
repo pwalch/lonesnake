@@ -17,7 +17,7 @@ CLR_UDL=""
 CLR_RED=""
 CLR_BGR=""
 CLR_END=""
-if [[ -x "$(command -v tput)" ]]; then
+if [[ $- == *i* ]] && [[ -x "$(command -v tput)" ]]; then
     CLR_BOLD="$(tput bold)"  # bold
     CLR_UDL="$(tput smul)"  # underline
     CLR_RED="$(tput setaf 1)"  # red
