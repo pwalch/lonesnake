@@ -140,7 +140,7 @@ fi
 
 **Tips**
 
-If you have `lonesnake-kit`, you can use <code>lonesnake-kit --direnv</code> to automatically populate `.envrc`.
+If you have `lonesnake-kit`, you can use <code>lonesnake-kit project --direnv</code> to automatically populate `.envrc`.
 
 <details>
 <summary>If you find yourself pasting into <code>.envrc</code> files often, automate it with this function for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
@@ -222,7 +222,7 @@ export POETRY_VIRTUALENVS_PATH="${PWD}/.lonesnake/poetry_virtualenvs"
 
 **Tips**
 
-If you have `lonesnake-kit`, note that <code>lonesnake-kit --direnv</code> populates the Poetry environment variables in `.envrc`.
+If you have `lonesnake-kit`, note that <code>lonesnake-kit project --direnv</code> populates the Poetry environment variables in `.envrc`.
 
 > ℹ️ In case of trouble, you can get rid of the Poetry virtualenvs using `rm -rf .lonesnake/poetry_virtualenvs`. Make sure to open a new shell for the change to take effect.
 
@@ -246,7 +246,7 @@ File Exclusion:
 - click `File > Preferences > Settings` and then go to `User` and search for `files.exclude`
 - click `Add Pattern` and register `**/.lonesnake`
 
-If you have `lonesnake-kit`, note that <code>lonesnake-kit --vscode</code> populates the `settings.json` of the workspace in the working directory.
+If you have `lonesnake-kit`, note that <code>lonesnake-kit project --vscode</code> populates the `settings.json` of the workspace in the working directory.
 
 </details>
 
