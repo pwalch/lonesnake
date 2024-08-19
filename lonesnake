@@ -24,7 +24,7 @@ readonly LATEST_PATCH_CP38="19"
 readonly LATEST_PATCH_CP39="19"
 readonly LATEST_PATCH_CP310="14"
 readonly LATEST_PATCH_CP311="9"
-readonly LATEST_PATCH_CP312="4"
+readonly LATEST_PATCH_CP312="5"
 
 # Default CPython version if the user does not request a specific version
 readonly DEFAULT_CP_MINOR="3.12"
