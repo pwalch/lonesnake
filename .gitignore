@@ -1,3 +1,7 @@
 # lonesnake
 /.envrc
 /.lonesnake/
+
+# tooling
+/.envrc
+/.vscode/
