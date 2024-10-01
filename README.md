@@ -57,7 +57,7 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://github.com/pwalch/lonesnake/releases/download/0.33.0/lonesnake && \
+  curl -sL -o ~/.local/bin/lonesnake https://raw.githubusercontent.com/pwalch/lonesnake/0.34.0/lonesnake && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
@@ -361,17 +361,16 @@ If you use `direnv`, Poetry, VS Code or some other popular tools, you might find
 
 Before using `lonesnake-kit`, make sure to read the instructions for vanilla `lonesnake`. Once you are familiar with it, check out available integrations with `lonesnake-kit --help`.
 
-### kit macOS installation with Brew
-
-`brew install lonesnake-kit`
-
-### kit Linux installation with curl
+### kit installation with curl
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake-kit https://github.com/pwalch/lonesnake/releases/download/0.33.0/lonesnake-kit && \
+  curl -sL -o ~/.local/bin/lonesnake-kit https://raw.githubusercontent.com/pwalch/lonesnake/0.34.0/helpers/lonesnake-kit && \
   chmod u+x ~/.local/bin/lonesnake-kit
 ```
+
+- make sure you have `export PATH="$HOME/.local/bin:$PATH"` in your `.bashrc` (Bash) or `.zshrc` (ZSH), and open a new shell
+- check that the script is accessible with `lonesnake-kit --help`
 
 ## lonesnake environment structure
 
