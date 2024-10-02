@@ -22,18 +22,30 @@ jobs:
           python -m pip install --upgrade pip
           pip install beautifulsoup4 requests
 
-      - name: Get current prog version
-        id: current_version
+      - name: Get current prog version and next prog version and generate branch name
+        id: version_definitions
         run: |
           current_prog_version="$(./release.py current-prog-version)"
           echo "Current version of lonesnake: ${current_prog_version}"
           echo "current_prog_version=${current_prog_version}" >> $GITHUB_OUTPUT
 
+          next_prog_version="$(./release.py next-prog-version)"
+          echo "Next version will be: $next_prog_version"
+          echo "next_prog_version=$next_prog_version" >> $GITHUB_OUTPUT
+
+          echo "new_branch_name=version-update/${next_prog_version}" >> $GITHUB_OUTPUT
+
       - name: Check for updates
         id: check_updates
         run: |
-          new_updates_output="$(./release.py is-new-update-available)"
           has_new_updates=0
+          if git branch -r | grep "origin/${{ steps.version_definitions.outputs.new_branch_name }}"; then
+            echo "Version update branch '${{ steps.version_definitions.outputs.new_branch_name }}' already exists."
+            echo "has_new_updates=$has_new_updates" >> $GITHUB_OUTPUT
+            exit 0
+          fi
+
+          new_updates_output="$(./release.py is-new-update-available)"
           if [[ "$new_updates_output" =~ "NO UPDATE AVAILABLE" ]]; then
             echo "No update available"
           else
@@ -42,31 +54,21 @@ jobs:
           fi
           echo "has_new_updates=$has_new_updates" >> $GITHUB_OUTPUT
 
-      - name: Get next prog version
-        id: next_version
-        if: steps.check_updates.outputs.has_new_updates == 1
-        run: |
-          next_prog_version="$(./release.py next-prog-version)"
-          echo "Next version will be: $next_prog_version"
-          echo "next_prog_version=$next_prog_version" >> $GITHUB_OUTPUT
-
       - name: Update patch block and prog version
         if: steps.check_updates.outputs.has_new_updates == 1
         run: |
           ./release.py overwrite-latest-patch-block
-          ./release.py overwrite-prog-version ${{ steps.next_version.outputs.next_prog_version }}
+          ./release.py overwrite-prog-version ${{ steps.version_definitions.outputs.next_prog_version }}
 
       - name: Create branch and commit changes
         if: steps.check_updates.outputs.has_new_updates == 1
         run: |
-          branch_name="version-update/$(date -u +%Y%m%d-%H%M-UTC)"
           git config user.name "GitHub Actions Bot"
           git config user.email "actions@github.com"
-          git checkout -b "$branch_name"
+          git checkout -b "${{ steps.version_definitions.outputs.new_branch_name }}"
           git add README.md lonesnake helpers/lonesnake-kit
-          git commit -m "Update lonesnake from ${{ steps.current_version.outputs.current_prog_version }} to ${{ steps.next_version.outputs.next_prog_version }} with new CPython patch versions"
-          git push origin "$branch_name"
-          echo "branch_name=$branch_name" >> $GITHUB_OUTPUT
+          git commit -m "Update lonesnake from ${{ steps.version_definitions.outputs.current_prog_version }} to ${{ steps.version_definitions.outputs.next_prog_version }} with new CPython patch versions"
+          git push origin "${{ steps.version_definitions.outputs.new_branch_name }}"
         id: create_branch
 
       - name: Create Pull Request
@@ -84,6 +86,6 @@ jobs:
             });
             console.log(`Pull Request created: ${result.data.html_url}`);
         env:
-          CURRENT_VERSION: ${{ steps.current_version.outputs.current_prog_version }}
-          NEXT_VERSION: ${{ steps.next_version.outputs.next_prog_version }}
-          BRANCH_NAME: ${{ steps.create_branch.outputs.branch_name }}
+          CURRENT_VERSION: ${{ steps.version_definitions.outputs.current_prog_version }}
+          NEXT_VERSION: ${{ steps.version_definitions.outputs.next_prog_version }}
+          BRANCH_NAME: ${{ steps.version_definitions.outputs.new_branch_name }}
