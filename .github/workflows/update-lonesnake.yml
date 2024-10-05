@@ -72,6 +72,9 @@ jobs:
           git add README.md lonesnake helpers/lonesnake-kit
           git commit -m "Update lonesnake from ${{ steps.version_definitions.outputs.current_prog_version }} to ${{ steps.version_definitions.outputs.next_prog_version }} with new CPython patch versions"
           git push origin "${{ steps.version_definitions.outputs.new_branch_name }}"
+
+          git tag "${{ steps.version_definitions.outputs.next_prog_version }}"
+          git push --tags
         id: create_branch
 
       - name: Create Pull Request
