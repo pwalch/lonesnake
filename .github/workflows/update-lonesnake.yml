@@ -41,21 +41,34 @@ jobs:
       - name: Check for updates
         id: check_updates
         run: |
-          has_new_updates=0
           if git branch -r | grep "origin/${{ steps.version_definitions.outputs.new_branch_name }}"; then
             echo "Version update branch '${{ steps.version_definitions.outputs.new_branch_name }}' already exists."
-            echo "has_new_updates=$has_new_updates" >> $GITHUB_OUTPUT
+
+            current_branch="$(git rev-parse --abbrev-ref HEAD)"
+            git checkout "${{ steps.version_definitions.outputs.new_branch_name }}"
+            new_branch_updates_output="$(./release.py is-new-update-available)"
+            git checkout "$current_branch"
+            if [[ ! "$new_branch_updates_output" =~ "NO UPDATE AVAILABLE" ]]; then
+              echo "Error: Release ${{ steps.version_definitions.outputs.next_prog_version }}" \
+                "is already outdated, please merge pull request associated to" \
+                "${{ steps.version_definitions.outputs.new_branch_name }}, then" \
+                "re-run the job" >&2
+              exit 1
+            fi
+
+            echo "has_new_updates=0" >> $GITHUB_OUTPUT
             exit 0
           fi
 
-          new_updates_output="$(./release.py is-new-update-available)"
-          if [[ "$new_updates_output" =~ "NO UPDATE AVAILABLE" ]]; then
+          has_new_updates=1
+          current_branch_updates_output="$(./release.py is-new-update-available)"
+          if [[ "$current_branch_updates_output" =~ "NO UPDATE AVAILABLE" ]]; then
             echo "No update available"
+            has_new_updates=0
           else
-            echo "$new_updates_output"
-            has_new_updates=1
+            echo "$current_branch_updates_output"
           fi
-          echo "has_new_updates=$has_new_updates" >> $GITHUB_OUTPUT
+          echo "has_new_updates=${has_new_updates}" >> $GITHUB_OUTPUT
 
       - name: Update patch block and prog version
         if: steps.check_updates.outputs.has_new_updates == 1
