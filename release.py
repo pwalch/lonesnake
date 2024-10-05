@@ -80,7 +80,7 @@ def main() -> None:
             pythondotorg_versions, lonesnake_versions
         )
 
-        if len(required_updates) >= 0:
+        if len(required_updates) >= 1:
             print(
                 "The following CPython version updates can be applied to the "
                 "lonesnake script:"
