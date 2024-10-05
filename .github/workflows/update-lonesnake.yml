@@ -88,6 +88,13 @@ jobs:
               head: process.env.BRANCH_NAME,
               base: 'main'
             });
+            // Add the 'release' label to the pull request
+            await github.rest.issues.addLabels({
+              owner,
+              repo,
+              issue_number: result.data.number,
+              labels: ['release']
+            });
             console.log(`Pull Request created: ${result.data.html_url}`);
         env:
           CURRENT_VERSION: ${{ steps.version_definitions.outputs.current_prog_version }}
