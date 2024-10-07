@@ -210,6 +210,7 @@ def overwrite_latest_patch_block(
         readonly LATEST_PATCH_CP310="{pythondotorg_patch_versions['3.10'].patch}"
         readonly LATEST_PATCH_CP311="{pythondotorg_patch_versions['3.11'].patch}"
         readonly LATEST_PATCH_CP312="{pythondotorg_patch_versions['3.12'].patch}"
+        readonly LATEST_PATCH_CP313="{pythondotorg_patch_versions['3.13'].patch}"
     """
     ).strip()
 

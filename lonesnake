@@ -25,10 +25,11 @@ readonly LATEST_PATCH_CP39="20"
 readonly LATEST_PATCH_CP310="15"
 readonly LATEST_PATCH_CP311="10"
 readonly LATEST_PATCH_CP312="7"
+readonly LATEST_PATCH_CP313="0"
 
 # Default CPython version if the user does not request a specific version
-readonly DEFAULT_CP_MINOR="3.12"
-readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP312}"
+readonly DEFAULT_CP_MINOR="3.13"
+readonly DEFAULT_CP_VERSION="${DEFAULT_CP_MINOR}.${LATEST_PATCH_CP313}"
 
 # Color markers
 CLR_BOLD=""
@@ -179,6 +180,10 @@ function guess_cpython_patch_number() {
         ;;
         12)
            echo "$LATEST_PATCH_CP312"
+           return
+        ;;
+        13)
+           echo "$LATEST_PATCH_CP313"
            return
         ;;
     esac
