@@ -66,6 +66,9 @@ ${CLR_BOLD}OPTIONS${CLR_END}
        is installed. Only versions from CPython 3.7+ are supported.
        If you pass only a minor version number such as '${DEFAULT_CP_MINOR}', the
        latest released patch of this minor version will be used.
+       Latest patches are the following:
+         3.7.${LATEST_PATCH_CP37}, 3.8.${LATEST_PATCH_CP38}, 3.9.${LATEST_PATCH_CP39}, 3.10.${LATEST_PATCH_CP310}, 3.11.${LATEST_PATCH_CP311}, 3.12.${LATEST_PATCH_CP312},
+         3.13.${LATEST_PATCH_CP313}.
        You can find the list of all Python releases on this page:
        https://www.python.org/downloads/
 
