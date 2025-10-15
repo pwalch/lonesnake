@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROG_VERSION="0.44.0"
+readonly PROG_VERSION="0.45.0"
 
 PROG_NAME="$(basename "$0")"
 readonly PROG_NAME
@@ -25,7 +25,7 @@ readonly LATEST_PATCH_CP39="24"
 readonly LATEST_PATCH_CP310="19"
 readonly LATEST_PATCH_CP311="14"
 readonly LATEST_PATCH_CP312="12"
-readonly LATEST_PATCH_CP313="8"
+readonly LATEST_PATCH_CP313="9"
 readonly LATEST_PATCH_CP314="0"
 
 # Default CPython version if the user does not request a specific version
