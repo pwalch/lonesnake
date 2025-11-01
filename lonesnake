@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROG_VERSION="0.45.0"
+readonly PROG_VERSION="0.46.0"
 
 PROG_NAME="$(basename "$0")"
 readonly PROG_NAME
@@ -21,7 +21,7 @@ readonly CACHE_DIR="$HOME/.cache/lonesnake"
 # Latest patch version number for each supported Python minor version
 readonly LATEST_PATCH_CP37="17"
 readonly LATEST_PATCH_CP38="20"
-readonly LATEST_PATCH_CP39="24"
+readonly LATEST_PATCH_CP39="25"
 readonly LATEST_PATCH_CP310="19"
 readonly LATEST_PATCH_CP311="14"
 readonly LATEST_PATCH_CP312="12"
