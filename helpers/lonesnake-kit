@@ -7,7 +7,7 @@
 set -euo pipefail
 
 PROG_NAME="$(basename "$0")"
-readonly PROG_VERSION="0.45.0"
+readonly PROG_VERSION="0.46.0"
 
 readonly STANDALONE_DIRNAME=".lonesnake"
 
