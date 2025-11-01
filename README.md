@@ -57,7 +57,7 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://raw.githubusercontent.com/pwalch/lonesnake/0.46.0/lonesnake && \
+  curl -sL -o ~/.local/bin/lonesnake https://raw.githubusercontent.com/pwalch/lonesnake/1.0.0/lonesnake && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
@@ -72,10 +72,10 @@ mkdir -p ~/.local/bin && \
 
 - `lonesnake`
   - generates an environment with the latest CPython version, in the `.lonesnake` directory at the root of the current working directory
-- `lonesnake --py 3.11`
-  - same, but with the latest patch of CPython 3.11
-- `lonesnake --py 3.11.0`
-  - same, but with exactly CPython 3.11.0
+- `lonesnake --py 3.13`
+  - same, but with the latest patch of CPython 3.13
+- `lonesnake --py 3.13.0`
+  - same, but with exactly CPython 3.13.0
 
 If the `.lonesnake` directory already exists, `lonesnake` asks for confirmation before deleting it.
 
@@ -171,7 +171,7 @@ EOM
 </details>
 
 <details>
-<summary>To show a prefix in your shell prompt indicating an active lonesnake venv (e.g. <code>🐍venv-3.11.0</code>), take inspiration from this example code for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
+<summary>To show a prefix in your shell prompt indicating an active lonesnake venv (e.g. <code>🐍venv-3.13.0</code>), take inspiration from this example code for your <code>~/.bashrc</code> or <code>~/.zshrc</code>.</summary>
 
 ```bash
 show_lonesnake_venv_prefix () {
@@ -365,7 +365,7 @@ Before using `lonesnake-kit`, make sure to read the instructions for vanilla `lo
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake-kit https://raw.githubusercontent.com/pwalch/lonesnake/0.46.0/helpers/lonesnake-kit && \
+  curl -sL -o ~/.local/bin/lonesnake-kit https://raw.githubusercontent.com/pwalch/lonesnake/1.0.0/helpers/lonesnake-kit && \
   chmod u+x ~/.local/bin/lonesnake-kit
 ```
 
@@ -379,7 +379,7 @@ This `.lonesnake` directory includes a Python interpreter built from [source](ht
 - `interpreter` directory includes `usr/local/bin`, `usr/local/include`, etc...
 - `venv` directory includes `bin`, `include`, `pyvenv.cfg` etc... It is created by the interpreter above.
 
-Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.11.0`). Cache directories enable us to skip the compilation step when CPython was already compiled for the requested version.
+Behind the scenes, `lonesnake` takes advantage of cache directories for the CPython source code and build files, located at `~/.cache/lonesnake/X.Y.Z/` where `X.Y.Z` is the Python version (e.g. `3.13.0`). Cache directories enable us to skip the compilation step when CPython was already compiled for the requested version.
 
 ## lonesnake environment construction
 

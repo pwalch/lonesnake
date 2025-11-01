@@ -7,7 +7,7 @@
 set -euo pipefail
 
 PROG_NAME="$(basename "$0")"
-readonly PROG_VERSION="0.46.0"
+readonly PROG_VERSION="1.0.0"
 
 readonly STANDALONE_DIRNAME=".lonesnake"
 
@@ -57,7 +57,7 @@ echo -e "${CLR_BOLD}${PROG_NAME}${CLR_END} project
   Usage: ${CLR_BOLD}${PROG_NAME}${CLR_END} project ${CLR_BOLD}[--direnv]${CLR_END} ${CLR_BOLD}[--vscode]${CLR_END} [${CLR_BOLD}--py${CLR_END} ${CLR_UDL}VERSION${CLR_END}]
   Examples:
     ${PROG_NAME} project --direnv
-    ${PROG_NAME} project --direnv --vscode --py 3.11
+    ${PROG_NAME} project --direnv --vscode --py 3.13
 
   Creates a new lonesnake environment, then adds the following
   configurations if requested:
