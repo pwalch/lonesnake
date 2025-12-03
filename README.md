@@ -57,7 +57,7 @@ sudo pacman -S --needed curl base-devel openssl zlib xz
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake https://raw.githubusercontent.com/pwalch/lonesnake/1.0.0/lonesnake && \
+  curl -sL -o ~/.local/bin/lonesnake https://raw.githubusercontent.com/pwalch/lonesnake/1.1.0/lonesnake && \
   chmod u+x ~/.local/bin/lonesnake
 ```
 
@@ -365,7 +365,7 @@ Before using `lonesnake-kit`, make sure to read the instructions for vanilla `lo
 
 ```bash
 mkdir -p ~/.local/bin && \
-  curl -sL -o ~/.local/bin/lonesnake-kit https://raw.githubusercontent.com/pwalch/lonesnake/1.0.0/helpers/lonesnake-kit && \
+  curl -sL -o ~/.local/bin/lonesnake-kit https://raw.githubusercontent.com/pwalch/lonesnake/1.1.0/helpers/lonesnake-kit && \
   chmod u+x ~/.local/bin/lonesnake-kit
 ```
 
