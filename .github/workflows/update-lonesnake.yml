@@ -10,13 +10,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           # Need to get all branches so we can check if update branch has already been created
           fetch-depth: "0"
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: "3.x"
 
@@ -94,7 +94,7 @@ jobs:
 
       - name: Create Pull Request
         if: steps.check_updates.outputs.has_new_updates == 1
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const { repo, owner } = context.repo;
