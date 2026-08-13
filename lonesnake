@@ -6,7 +6,7 @@
 
 set -euo pipefail
 
-readonly PROG_VERSION="1.8.0"
+readonly PROG_VERSION="1.9.0"
 
 PROG_NAME="$(basename "$0")"
 readonly PROG_NAME
@@ -22,9 +22,9 @@ readonly CACHE_DIR="$HOME/.cache/lonesnake"
 readonly LATEST_PATCH_CP37="17"
 readonly LATEST_PATCH_CP38="20"
 readonly LATEST_PATCH_CP39="25"
-readonly LATEST_PATCH_CP310="20"
-readonly LATEST_PATCH_CP311="15"
-readonly LATEST_PATCH_CP312="13"
+readonly LATEST_PATCH_CP310="21"
+readonly LATEST_PATCH_CP311="16"
+readonly LATEST_PATCH_CP312="14"
 readonly LATEST_PATCH_CP313="15"
 readonly LATEST_PATCH_CP314="7"
 
